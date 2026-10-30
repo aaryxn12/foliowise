@@ -15,6 +15,21 @@ class GoalFunding:
     surplus_today: float  # existing money beyond what the goal needs, in today's rupees
 
 
+@dataclass(frozen=True)
+class Affordability:
+    """SIP the goals need compared with what the user can invest each month.
+
+    At most one of `shortfall` and `surplus` is non-zero.
+    """
+
+    sip_needed: float
+    sip_affordable: float
+    shortfall: float  # how much more per month is needed (0 if affordable)
+    surplus: float  # spare monthly capacity after the plan (0 if short)
+    coverage_pct: float  # share of the needed SIP the user can cover, capped at 100
+    is_affordable: bool
+
+
 def annual_to_monthly_rate(annual_rate: float) -> float:
     """Effective monthly rate for an effective annual rate. 0.12 → ~0.009489."""
     return (1 + annual_rate) ** (1 / 12) - 1
@@ -63,10 +78,53 @@ def sip_needed(
         )
 
     # FV of ₹1 per month, paid at the start of each month (annuity due).
-    annuity_due_factor = ((1 + monthly_rate) ** months - 1) / monthly_rate * (1 + monthly_rate)
+    annuity_due_factor = (
+        ((1 + monthly_rate) ** months - 1) / monthly_rate * (1 + monthly_rate)
+    )
 
     return GoalFunding(
         monthly_sip=gap / annuity_due_factor,
         lumpsum_needed_today=lumpsum_needed_today,
         surplus_today=surplus_today,
+    )
+
+
+def retirement_corpus(
+    first_year_expense: float,
+    years_in_retirement: int,
+    inflation: float,
+    post_retirement_return: float,
+) -> float:
+    """Money needed on retirement day to pay inflation-growing yearly expenses.
+
+    Expenses are paid at the start of each retirement year (annuity due) and grow
+    with inflation; the remaining corpus keeps earning `post_retirement_return`.
+    Summing year by year handles return == inflation with no special case.
+    ₹19,24,281 a year, 35 years, 6% inflation, 8% return → ~₹4.99 Cr.
+    """
+    if years_in_retirement < 0:
+        raise ValueError("years_in_retirement cannot be negative")
+
+    growth_vs_return = (1 + inflation) / (1 + post_retirement_return)
+    return sum(
+        first_year_expense * growth_vs_return**year
+        for year in range(years_in_retirement)
+    )
+
+
+def check_affordability(sip_needed: float, sip_affordable: float) -> Affordability:
+    """Compare the SIP the goals need with what the user can invest each month."""
+    if sip_needed < 0 or sip_affordable < 0:
+        raise ValueError("SIP amounts cannot be negative")
+
+    coverage_pct = (
+        100.0 if sip_needed == 0 else min(100.0, sip_affordable / sip_needed * 100)
+    )
+    return Affordability(
+        sip_needed=sip_needed,
+        sip_affordable=sip_affordable,
+        shortfall=max(0.0, sip_needed - sip_affordable),
+        surplus=max(0.0, sip_affordable - sip_needed),
+        coverage_pct=coverage_pct,
+        is_affordable=sip_affordable >= sip_needed,
     )
