@@ -7,8 +7,8 @@ Estimates are focused hours. Status key: `[x]` done, `[ ]` to do.
 
 | # | Milestone | Status | Est. hours left |
 |---|---|---|---|
-| 1 | Maths engine (`planner/sip.py`) | Done (pending push) | 0.5 |
-| 2 | Investment policy and allocation (`planner/allocation.py`) | Not started | 6 |
+| 1 | Maths engine (`planner/sip.py`) | Done | 0 |
+| 2 | Investment policy and allocation (`planner/allocation.py`) | In progress | 6 |
 | 3 | Fund data and screening | Not started | 7 |
 | 4 | Plan builder (form in, full plan out) | Not started | 3 |
 | 5 | Agent (LangGraph) | Not started | 7 |
@@ -18,7 +18,7 @@ Estimates are focused hours. Status key: `[x]` done, `[ ]` to do.
 | 9 | AWS deploy (CDK) and CI/CD | Not started | 6 |
 | 10 | Frontend (Angular) | Not started | 8 |
 | 11 | Launch polish | Not started | 3 |
-| | **Total remaining** | | **~51** |
+| | **Total remaining** | | **~50** |
 
 ---
 
@@ -31,7 +31,7 @@ Pure time-value-of-money functions, test-first.
 - [x] `retirement_corpus` (year-by-year sum; handles return == inflation)
 - [x] `check_affordability` returning `Affordability`
 - [x] 16 tests incl. month-by-month simulation and closed-form cross-check
-- [ ] Commit and push; Ruff format + check clean
+- [x] Commit and push; Ruff format + check clean
 
 ## 2. Investment policy and allocation
 Turn the CFA policy tables into config plus code that applies them.
