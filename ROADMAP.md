@@ -8,7 +8,7 @@ Estimates are focused hours. Status key: `[x]` done, `[ ]` to do.
 | # | Milestone | Status | Est. hours left |
 |---|---|---|---|
 | 1 | Maths engine (`planner/sip.py`) | Done | 0 |
-| 2 | Investment policy and allocation (`planner/allocation.py`) | In progress | 6 |
+| 2 | Investment policy and allocation (`planner/allocation.py`) | In progress | 3 |
 | 3 | Fund data and screening | Not started | 7 |
 | 4 | Plan builder (form in, full plan out) | Not started | 3 |
 | 5 | Agent (LangGraph) | Not started | 7 |
@@ -18,7 +18,7 @@ Estimates are focused hours. Status key: `[x]` done, `[ ]` to do.
 | 9 | AWS deploy (CDK) and CI/CD | Not started | 6 |
 | 10 | Frontend (Angular) | Not started | 8 |
 | 11 | Launch polish | Not started | 3 |
-| | **Total remaining** | | **~50** |
+| | **Total remaining** | | **~47** |
 
 ---
 
@@ -36,13 +36,13 @@ Pure time-value-of-money functions, test-first.
 ## 2. Investment policy and allocation
 Turn the CFA policy tables into config plus code that applies them.
 
-- [ ] `RiskLevel` ordered Enum
-- [ ] Willingness score from the 5 quiz answers
-- [ ] Ability score (horizon, dependents, spouse income, income cover, emergency fund)
-- [ ] `risk_bucket` = lower of willingness and ability
-- [ ] `policy.yaml`: equity/debt/gold by bucket and years-to-goal; equity split by bucket; asset-class return assumptions
-- [ ] `goal_allocation` with glide path (per goal)
-- [ ] `expected_return` per goal from its mix
+- [x] `RiskLevel` ordered Enum
+- [x] Willingness score from the 4 behaviour questions in the quiz
+- [x] Ability score (emergency fund, dependents without second income, EMI burden; horizon applied per goal instead)
+- [x] `risk_bucket` = lower of willingness and ability
+- [ ] Policy table as constants in `allocation.py` (equity by band + gold); equity split by bucket; asset-class return assumptions
+- [ ] `goal_allocation` with glide path (per goal) — in progress, tests written
+- [x] `expected_return` per goal from its mix
 - [ ] Existing investments grown at type-specific rates (MF, FD, PPF, EPF)
 - [ ] Emergency fund check (e.g. 6 x monthly outgoings)
 - [ ] Crash test on the user's actual money
