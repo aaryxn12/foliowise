@@ -16,8 +16,10 @@ EQUITY_BY_BAND = {
 GOLD_SHARE = 0.05
 GOLD_MIN_YEARS = 3
 
+
 class RiskLevel(IntEnum):
     """Ordered risk levels, so min() and < work."""
+
     CONSERVATIVE = 1
     MODERATE = 2
     AGGRESSIVE = 3
@@ -55,7 +57,12 @@ class ReturnAssumptions:
 
 def expected_return(allocation: Allocation, assumptions: ReturnAssumptions) -> float:
     """Weighted average return for this mix, e.g. 85/10/5 at 12/7/8% → 11.3%."""
-    return (allocation.equity * assumptions.equity) + (allocation.debt * assumptions.debt) + (allocation.gold * assumptions.gold)
+    return (
+        (allocation.equity * assumptions.equity)
+        + (allocation.debt * assumptions.debt)
+        + (allocation.gold * assumptions.gold)
+    )
+
 
 # Ability thresholds: each one crossed is a warning sign.
 MIN_EMERGENCY_MONTHS = 3
@@ -104,7 +111,20 @@ def ability_level(
 
 
 def goal_allocation(bucket: RiskLevel, years_to_goal: int) -> Allocation:
-    """Equity/debt/gold split for one goal from the policy table."""
-    if years_to_goal <= 0:
-        raise ValueError("Years to goal should be greater than 0")
-    
+    """Equity/debt/gold split for one goal from the policy table.
+
+    The band is the longest one the goal reaches, so as a goal gets closer it
+    drops into lower-equity bands: that is the glide path.
+    Moderate, 20 years → 70/25/5. Moderate, 7 years → 50/45/5.
+    """
+    if years_to_goal < 0:
+        raise ValueError(f"years_to_goal cannot be negative, got {years_to_goal}")
+
+    # Keys are 10, 5, 3, 0 (longest first); 0 always matches, so a band is found.
+    for band in EQUITY_BY_BAND:
+        if years_to_goal >= band:
+            break
+
+    equity = EQUITY_BY_BAND[band][bucket - 1]
+    gold = GOLD_SHARE if years_to_goal >= GOLD_MIN_YEARS else 0.0
+    return Allocation(equity=equity, debt=1 - equity - gold, gold=gold)

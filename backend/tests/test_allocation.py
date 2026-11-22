@@ -28,7 +28,9 @@ def test_risk_bucket_uses_ability_when_it_is_lower():
 
 def test_risk_bucket_uses_willingness_when_it_is_lower():
     """Could afford risk, but doesn't want it: the plan respects that."""
-    bucket = risk_bucket(willingness=RiskLevel.CONSERVATIVE, ability=RiskLevel.AGGRESSIVE)
+    bucket = risk_bucket(
+        willingness=RiskLevel.CONSERVATIVE, ability=RiskLevel.AGGRESSIVE
+    )
     assert bucket == RiskLevel.CONSERVATIVE
 
 

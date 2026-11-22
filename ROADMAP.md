@@ -8,7 +8,7 @@ Estimates are focused hours. Status key: `[x]` done, `[ ]` to do.
 | # | Milestone | Status | Est. hours left |
 |---|---|---|---|
 | 1 | Maths engine (`planner/sip.py`) | Done | 0 |
-| 2 | Investment policy and allocation (`planner/allocation.py`) | In progress | 3 |
+| 2 | Investment policy and allocation (`planner/allocation.py`) | In progress | 2 |
 | 3 | Fund data and screening | Not started | 7 |
 | 4 | Plan builder (form in, full plan out) | Not started | 3 |
 | 5 | Agent (LangGraph) | Not started | 7 |
@@ -18,7 +18,7 @@ Estimates are focused hours. Status key: `[x]` done, `[ ]` to do.
 | 9 | AWS deploy (CDK) and CI/CD | Not started | 6 |
 | 10 | Frontend (Angular) | Not started | 8 |
 | 11 | Launch polish | Not started | 3 |
-| | **Total remaining** | | **~47** |
+| | **Total remaining** | | **~46** |
 
 ---
 
@@ -40,8 +40,9 @@ Turn the CFA policy tables into config plus code that applies them.
 - [x] Willingness score from the 4 behaviour questions in the quiz
 - [x] Ability score (emergency fund, dependents without second income, EMI burden; horizon applied per goal instead)
 - [x] `risk_bucket` = lower of willingness and ability
-- [ ] Policy table as constants in `allocation.py` (equity by band + gold); equity split by bucket; asset-class return assumptions
-- [ ] `goal_allocation` with glide path (per goal) — in progress, tests written
+- [x] Policy table as constants in `allocation.py` (equity by band + gold)
+- [ ] Equity split by bucket (large/flexi/mid/small) and default asset-class return assumptions
+- [x] `goal_allocation` with glide path (per goal)
 - [x] `expected_return` per goal from its mix
 - [ ] Existing investments grown at type-specific rates (MF, FD, PPF, EPF)
 - [ ] Emergency fund check (e.g. 6 x monthly outgoings)
@@ -118,7 +119,5 @@ Turn the CFA policy tables into config plus code that applies them.
 
 ---
 
-## Possible v1 cut (if the timeline needs it)
-Deferred to v1.1 without hurting the core story: PDF download, plan Undo/versioning, nightly
-EventBridge refresh (refresh data manually at first), mobile polish, shortfall levers beyond
-"retire later" and "step-up SIP".
+## Scope decision
+2026-11-22: building the full scope (no v1 cut), with more weekly time on the project.
