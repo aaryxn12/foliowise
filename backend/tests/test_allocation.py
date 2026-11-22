@@ -3,12 +3,17 @@ from itertools import pairwise
 import pytest
 
 from planner.allocation import (
+    DEFAULT_RETURN_ASSUMPTIONS,
     Allocation,
+    EquitySplit,
+    InvestmentType,
     ReturnAssumptions,
     RiskLevel,
     ability_level,
+    equity_split,
     expected_return,
     goal_allocation,
+    grow_existing_investments,
     risk_bucket,
     willingness_from_quiz,
 )
@@ -215,3 +220,96 @@ def test_glide_path_never_adds_equity_as_the_goal_gets_closer(bucket):
 def test_goal_allocation_rejects_negative_years():
     with pytest.raises(ValueError):
         goal_allocation(RiskLevel.MODERATE, years_to_goal=-1)
+
+
+# --- Equity split: how the equity share divides across fund categories -------
+# Share of the EQUITY part (not of the whole goal), by risk level:
+#                 large cap index  flexi  mid   small
+#   conservative       60%          30%   10%    0%
+#   moderate           40%          30%   20%   10%
+#   aggressive         30%          25%   25%   20%
+
+
+def test_equity_split_moderate():
+    split = equity_split(RiskLevel.MODERATE)
+    assert split.large_cap == pytest.approx(0.40)
+    assert split.flexi_cap == pytest.approx(0.30)
+    assert split.mid_cap == pytest.approx(0.20)
+    assert split.small_cap == pytest.approx(0.10)
+
+
+def test_equity_split_conservative_has_no_small_cap():
+    assert equity_split(RiskLevel.CONSERVATIVE).small_cap == 0
+
+
+def test_equity_split_aggressive_small_cap_is_capped_at_20_percent():
+    assert equity_split(RiskLevel.AGGRESSIVE).small_cap == pytest.approx(0.20)
+
+
+@pytest.mark.parametrize("bucket", list(RiskLevel))
+def test_more_risk_never_means_less_small_cap(bucket):
+    """Small cap share must rise (or stay) as the risk level rises."""
+    if bucket == RiskLevel.AGGRESSIVE:
+        return
+    higher = RiskLevel(bucket + 1)
+    assert equity_split(higher).small_cap >= equity_split(bucket).small_cap
+
+
+def test_equity_split_rejects_shares_that_do_not_sum_to_one():
+    with pytest.raises(ValueError):
+        EquitySplit(large_cap=0.50, flexi_cap=0.50, mid_cap=0.50, small_cap=0.0)
+
+
+def test_equity_split_rejects_negative_shares():
+    with pytest.raises(ValueError):
+        EquitySplit(large_cap=1.10, flexi_cap=0.0, mid_cap=0.0, small_cap=-0.10)
+
+
+# --- Default return assumptions (the dashboard sliders start here) ------------
+
+
+def test_default_return_assumptions():
+    assert DEFAULT_RETURN_ASSUMPTIONS.equity == pytest.approx(0.12)
+    assert DEFAULT_RETURN_ASSUMPTIONS.debt == pytest.approx(0.07)
+    assert DEFAULT_RETURN_ASSUMPTIONS.gold == pytest.approx(0.08)
+
+
+# --- Existing investments: each type grows at its own rate --------------------
+# EPF 8.25%, PPF 7.1%, FD 7%, mutual funds 12% (treated as equity-heavy).
+
+
+def test_epf_grows_at_its_own_rate():
+    total = grow_existing_investments({InvestmentType.EPF: 1_00_000}, years=10)
+    assert total == pytest.approx(1_00_000 * 1.0825**10)
+
+
+def test_mixed_holdings_grow_separately_then_add_up():
+    """₹16.7L split across four types: each grows at its own rate."""
+    holdings = {
+        InvestmentType.MUTUAL_FUNDS: 8_00_000,
+        InvestmentType.EPF: 5_00_000,
+        InvestmentType.PPF: 2_50_000,
+        InvestmentType.FD: 1_20_000,
+    }
+    expected = (
+        8_00_000 * 1.12**20
+        + 5_00_000 * 1.0825**20
+        + 2_50_000 * 1.071**20
+        + 1_20_000 * 1.07**20
+    )
+    assert grow_existing_investments(holdings, years=20) == pytest.approx(expected)
+
+
+def test_mixed_holdings_grow_less_than_if_all_were_equity():
+    """The bug this prevents: growing EPF/PPF/FD at the equity rate overstates them."""
+    holdings = {InvestmentType.PPF: 5_00_000, InvestmentType.FD: 5_00_000}
+    assert grow_existing_investments(holdings, years=20) < 10_00_000 * 1.12**20
+
+
+def test_no_existing_investments_grow_to_zero():
+    assert grow_existing_investments({}, years=20) == 0
+
+
+def test_existing_investments_reject_negative_years():
+    with pytest.raises(ValueError):
+        grow_existing_investments({InvestmentType.FD: 1_00_000}, years=-1)

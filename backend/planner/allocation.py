@@ -2,19 +2,9 @@
 
 import math
 from dataclasses import dataclass
-from enum import IntEnum
+from enum import Enum, IntEnum
 
-# Equity share by years-to-goal band: (conservative, moderate, aggressive).
-# Bands are checked from the longest down; the first one the goal reaches wins.
-
-EQUITY_BY_BAND = {
-    10: (0.50, 0.70, 0.85),
-    5: (0.35, 0.50, 0.65),
-    3: (0.15, 0.30, 0.40),
-    0: (0.00, 0.05, 0.10),
-}
-GOLD_SHARE = 0.05
-GOLD_MIN_YEARS = 3
+from planner.sip import future_value_lumpsum
 
 
 class RiskLevel(IntEnum):
@@ -23,6 +13,34 @@ class RiskLevel(IntEnum):
     CONSERVATIVE = 1
     MODERATE = 2
     AGGRESSIVE = 3
+
+
+# Equity share by years-to-goal band and risk level.
+# Bands are checked from the longest down; the first one the goal reaches wins.
+EQUITY_BY_BAND = {
+    10: {
+        RiskLevel.CONSERVATIVE: 0.50,
+        RiskLevel.MODERATE: 0.70,
+        RiskLevel.AGGRESSIVE: 0.85,
+    },
+    5: {
+        RiskLevel.CONSERVATIVE: 0.35,
+        RiskLevel.MODERATE: 0.50,
+        RiskLevel.AGGRESSIVE: 0.65,
+    },
+    3: {
+        RiskLevel.CONSERVATIVE: 0.15,
+        RiskLevel.MODERATE: 0.30,
+        RiskLevel.AGGRESSIVE: 0.40,
+    },
+    0: {
+        RiskLevel.CONSERVATIVE: 0.00,
+        RiskLevel.MODERATE: 0.05,
+        RiskLevel.AGGRESSIVE: 0.10,
+    },
+}
+GOLD_SHARE = 0.05
+GOLD_MIN_YEARS = 3
 
 
 def risk_bucket(willingness: RiskLevel, ability: RiskLevel) -> RiskLevel:
@@ -53,6 +71,46 @@ class ReturnAssumptions:
     equity: float
     debt: float
     gold: float
+
+
+# Starting values for the dashboard's return sliders.
+DEFAULT_RETURN_ASSUMPTIONS = ReturnAssumptions(equity=0.12, debt=0.07, gold=0.08)
+
+
+@dataclass(frozen=True)
+class EquitySplit:
+    """Share of a goal's EQUITY money in each fund category. Shares add up to 1."""
+
+    large_cap: float
+    flexi_cap: float
+    mid_cap: float
+    small_cap: float
+
+    def __post_init__(self) -> None:
+        weights = (self.large_cap, self.flexi_cap, self.mid_cap, self.small_cap)
+        if any(weight < 0 for weight in weights):
+            raise ValueError(f"Weights cannot be negative: {weights}")
+        if not math.isclose(sum(weights), 1.0):
+            raise ValueError(f"Weights must add up to 1, got {sum(weights):.4f}")
+
+
+# How the equity part of a goal is divided across fund categories, by risk level.
+EQUITY_SPLIT_BY_RISK = {
+    RiskLevel.CONSERVATIVE: EquitySplit(
+        large_cap=0.60, flexi_cap=0.30, mid_cap=0.10, small_cap=0.00
+    ),
+    RiskLevel.MODERATE: EquitySplit(
+        large_cap=0.40, flexi_cap=0.30, mid_cap=0.20, small_cap=0.10
+    ),
+    RiskLevel.AGGRESSIVE: EquitySplit(
+        large_cap=0.30, flexi_cap=0.25, mid_cap=0.25, small_cap=0.20
+    ),
+}
+
+
+def equity_split(bucket: RiskLevel) -> EquitySplit:
+    """How the equity part of a goal is divided across fund categories."""
+    return EQUITY_SPLIT_BY_RISK[bucket]
 
 
 def expected_return(allocation: Allocation, assumptions: ReturnAssumptions) -> float:
@@ -125,6 +183,41 @@ def goal_allocation(bucket: RiskLevel, years_to_goal: int) -> Allocation:
         if years_to_goal >= band:
             break
 
-    equity = EQUITY_BY_BAND[band][bucket - 1]
+    equity = EQUITY_BY_BAND[band][bucket]
     gold = GOLD_SHARE if years_to_goal >= GOLD_MIN_YEARS else 0.0
     return Allocation(equity=equity, debt=1 - equity - gold, gold=gold)
+
+
+class InvestmentType(Enum):
+    """Kinds of existing savings the form asks about (unordered, so not IntEnum)."""
+
+    MUTUAL_FUNDS = "mutual_funds"
+    EPF = "epf"
+    PPF = "ppf"
+    FD = "fd"
+
+
+# Yearly growth assumed for each kind of existing savings.
+EXISTING_INVESTMENT_RETURNS = {
+    InvestmentType.MUTUAL_FUNDS: 0.12,
+    InvestmentType.EPF: 0.0825,
+    InvestmentType.PPF: 0.071,
+    InvestmentType.FD: 0.07,
+}
+
+
+def grow_existing_investments(
+    holdings: dict[InvestmentType, float], years: int
+) -> float:
+    """Total value of existing savings after `years`, each type at its own rate.
+
+    Growing EPF, PPF and FDs at the equity rate would overstate the savings and
+    make the SIP the user needs look smaller than it really is.
+    """
+    if years < 0:
+        raise ValueError(f"years cannot be negative, got {years}")
+
+    return sum(
+        future_value_lumpsum(amount, EXISTING_INVESTMENT_RETURNS[kind], years)
+        for kind, amount in holdings.items()
+    )

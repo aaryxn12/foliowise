@@ -8,7 +8,7 @@ Estimates are focused hours. Status key: `[x]` done, `[ ]` to do.
 | # | Milestone | Status | Est. hours left |
 |---|---|---|---|
 | 1 | Maths engine (`planner/sip.py`) | Done | 0 |
-| 2 | Investment policy and allocation (`planner/allocation.py`) | In progress | 2 |
+| 2 | Investment policy and allocation (`planner/allocation.py`) | In progress | 1 |
 | 3 | Fund data and screening | Not started | 7 |
 | 4 | Plan builder (form in, full plan out) | Not started | 3 |
 | 5 | Agent (LangGraph) | Not started | 7 |
@@ -18,7 +18,7 @@ Estimates are focused hours. Status key: `[x]` done, `[ ]` to do.
 | 9 | AWS deploy (CDK) and CI/CD | Not started | 6 |
 | 10 | Frontend (Angular) | Not started | 8 |
 | 11 | Launch polish | Not started | 3 |
-| | **Total remaining** | | **~46** |
+| | **Total remaining** | | **~45** |
 
 ---
 
@@ -41,10 +41,10 @@ Turn the CFA policy tables into config plus code that applies them.
 - [x] Ability score (emergency fund, dependents without second income, EMI burden; horizon applied per goal instead)
 - [x] `risk_bucket` = lower of willingness and ability
 - [x] Policy table as constants in `allocation.py` (equity by band + gold)
-- [ ] Equity split by bucket (large/flexi/mid/small) and default asset-class return assumptions
+- [x] Equity split by bucket (large/flexi/mid/small) and default asset-class return assumptions
 - [x] `goal_allocation` with glide path (per goal)
 - [x] `expected_return` per goal from its mix
-- [ ] Existing investments grown at type-specific rates (MF, FD, PPF, EPF)
+- [x] Existing investments grown at type-specific rates (MF, FD, PPF, EPF)
 - [ ] Emergency fund check (e.g. 6 x monthly outgoings)
 - [ ] Crash test on the user's actual money
 
