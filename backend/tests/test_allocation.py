@@ -358,7 +358,7 @@ def test_emergency_fund_rejects_zero_outgoings():
         )
 
 
-# --- Crash test: what a 2008-style crash would do to the user's actual money --
+# --- Crash test: what an illustrative severe crash does to the user's money ---
 # Illustrative one-year shocks: large cap -35%, flexi -38%, mid -45%,
 # small -55%, debt +3%, gold +10%.
 

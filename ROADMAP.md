@@ -47,7 +47,7 @@ Turn the CFA policy tables into config plus code that applies them.
 - [x] `expected_return` per goal from its mix
 - [x] Existing investments grown at type-specific rates (MF, FD, PPF, EPF)
 - [x] Emergency fund check (6 x monthly outgoings)
-- [x] Crash test (2008-style scenario) on a given amount and allocation
+- [x] Crash test (illustrative severe crash) on a given amount and allocation
 
 ## 3. Fund data and screening
 - [ ] Curate ~40-50 direct-growth funds across categories (scheme codes)

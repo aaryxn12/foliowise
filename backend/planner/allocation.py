@@ -265,7 +265,9 @@ class CrashScenario:
     gold: float
 
 
-# Illustrative 2008-style crash.
+# Illustrative severe crash: a stress test of the user's choices, not a forecast.
+# Not calibrated to a specific historical event (2008 itself was worse:
+# Sensex -52%, BSE midcap -67%, BSE smallcap -72% for the calendar year).
 SEVERE_CRASH = CrashScenario(
     large_cap=-0.35,
     flexi_cap=-0.38,
