@@ -221,3 +221,100 @@ def grow_existing_investments(
         future_value_lumpsum(amount, EXISTING_INVESTMENT_RETURNS[kind], years)
         for kind, amount in holdings.items()
     )
+
+
+# Recommended emergency fund: this many months of outgoings (expenses + EMIs).
+EMERGENCY_FUND_TARGET_MONTHS = 6
+
+
+@dataclass(frozen=True)
+class EmergencyFundStatus:
+    """How well the emergency fund covers monthly outgoings."""
+
+    months_covered: float
+    target: float  # recommended amount
+    shortfall: float  # 0 if already adequate
+    is_adequate: bool
+
+
+def emergency_fund_check(
+    emergency_fund: float, monthly_expenses: float, monthly_emis: float
+) -> EmergencyFundStatus:
+    """Compare the emergency fund with the recommended 6 months of outgoings."""
+    outgoings = monthly_expenses + monthly_emis
+    if outgoings <= 0:
+        raise ValueError(f"Monthly outgoings must be positive, got {outgoings}")
+    target = EMERGENCY_FUND_TARGET_MONTHS * outgoings
+    return EmergencyFundStatus(
+        months_covered=emergency_fund / outgoings,
+        target=target,
+        shortfall=max(0.0, target - emergency_fund),
+        is_adequate=emergency_fund >= target,
+    )
+
+
+@dataclass(frozen=True)
+class CrashScenario:
+    """One-year move of each category in a market crash (-0.35 = fell 35%)."""
+
+    large_cap: float
+    flexi_cap: float
+    mid_cap: float
+    small_cap: float
+    debt: float
+    gold: float
+
+
+# Illustrative 2008-style crash.
+SEVERE_CRASH = CrashScenario(
+    large_cap=-0.35,
+    flexi_cap=-0.38,
+    mid_cap=-0.45,
+    small_cap=-0.55,
+    debt=0.03,
+    gold=0.10,
+)
+
+
+@dataclass(frozen=True)
+class CrashTestResult:
+    """What a crash would do to the user's money."""
+
+    value_before: float
+    value_after: float
+    loss: float  # negative means the portfolio gained
+    loss_pct: float  # e.g. 35.11 for a 35.11% fall
+
+
+def crash_test(
+    amount: float,
+    allocation: Allocation,
+    split: EquitySplit,
+    scenario: CrashScenario = SEVERE_CRASH,
+) -> CrashTestResult:
+    """Value of `amount` after a crash, given how it is invested."""
+    if amount < 0:
+        raise ValueError(f"amount cannot be negative, got {amount}")
+
+    equity_move = (
+        split.large_cap * scenario.large_cap
+        + split.flexi_cap * scenario.flexi_cap
+        + split.mid_cap * scenario.mid_cap
+        + split.small_cap * scenario.small_cap
+    )
+    total_move = (
+        allocation.equity * equity_move
+        + allocation.debt * scenario.debt
+        + allocation.gold * scenario.gold
+    )
+
+    value_after = amount * (1 + total_move)
+    loss = amount - value_after
+    loss_pct = loss / amount * 100 if amount > 0 else 0.0
+
+    return CrashTestResult(
+        value_before=amount,
+        value_after=value_after,
+        loss=loss,
+        loss_pct=loss_pct,
+    )

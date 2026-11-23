@@ -4,12 +4,15 @@ import pytest
 
 from planner.allocation import (
     DEFAULT_RETURN_ASSUMPTIONS,
+    SEVERE_CRASH,
     Allocation,
     EquitySplit,
     InvestmentType,
     ReturnAssumptions,
     RiskLevel,
     ability_level,
+    crash_test,
+    emergency_fund_check,
     equity_split,
     expected_return,
     goal_allocation,
@@ -313,3 +316,117 @@ def test_no_existing_investments_grow_to_zero():
 def test_existing_investments_reject_negative_years():
     with pytest.raises(ValueError):
         grow_existing_investments({InvestmentType.FD: 1_00_000}, years=-1)
+
+
+# --- Emergency fund check -----------------------------------------------------
+# Recommended: 6 months of outgoings (expenses + EMIs) set aside before investing.
+# (Separate from ability_level's 3-month warning sign: 3 months lowers the risk
+# level; 6 months is the target the dashboard recommends.)
+
+
+def test_emergency_fund_short_of_six_months():
+    """The design's example: ₹3.3L saved, ₹55k expenses + ₹12k EMIs a month."""
+    status = emergency_fund_check(
+        emergency_fund=3_30_000, monthly_expenses=55_000, monthly_emis=12_000
+    )
+    assert status.months_covered == pytest.approx(4.93, abs=0.01)
+    assert status.target == 4_02_000  # 6 x ₹67,000
+    assert status.shortfall == 72_000
+    assert status.is_adequate is False
+
+
+def test_emergency_fund_that_covers_six_months():
+    status = emergency_fund_check(
+        emergency_fund=5_00_000, monthly_expenses=55_000, monthly_emis=12_000
+    )
+    assert status.shortfall == 0
+    assert status.is_adequate is True
+
+
+def test_emergency_fund_exactly_six_months_is_adequate():
+    status = emergency_fund_check(
+        emergency_fund=6_00_000, monthly_expenses=1_00_000, monthly_emis=0
+    )
+    assert status.is_adequate is True
+
+
+def test_emergency_fund_rejects_zero_outgoings():
+    """No outgoings would mean dividing by zero; treat it as invalid input."""
+    with pytest.raises(ValueError):
+        emergency_fund_check(
+            emergency_fund=1_00_000, monthly_expenses=0, monthly_emis=0
+        )
+
+
+# --- Crash test: what a 2008-style crash would do to the user's actual money --
+# Illustrative one-year shocks: large cap -35%, flexi -38%, mid -45%,
+# small -55%, debt +3%, gold +10%.
+
+
+def test_crash_test_aggressive_long_goal():
+    """85/10/5 with a 30/25/25/20 equity split: about -35%, ₹10L → ~₹6.49L."""
+    result = crash_test(
+        amount=10_00_000,
+        allocation=Allocation(equity=0.85, debt=0.10, gold=0.05),
+        split=equity_split(RiskLevel.AGGRESSIVE),
+    )
+    assert result.value_before == 10_00_000
+    assert result.value_after == pytest.approx(6_48_875, abs=1)
+    assert result.loss == pytest.approx(3_51_125, abs=1)
+    assert result.loss_pct == pytest.approx(35.11, abs=0.01)
+
+
+def test_crash_test_moderate_retirement():
+    """Priya: 70/25/5 with a 40/30/20/10 split loses about 26.7%."""
+    result = crash_test(
+        amount=10_00_000,
+        allocation=goal_allocation(RiskLevel.MODERATE, years_to_goal=20),
+        split=equity_split(RiskLevel.MODERATE),
+    )
+    assert result.loss_pct == pytest.approx(26.68, abs=0.01)
+
+
+def test_crash_test_all_debt_gains_slightly():
+    result = crash_test(
+        amount=10_00_000,
+        allocation=Allocation(equity=0.0, debt=1.0, gold=0.0),
+        split=equity_split(RiskLevel.CONSERVATIVE),
+    )
+    assert result.value_after == pytest.approx(10_30_000)
+    assert result.loss == pytest.approx(-30_000)  # negative loss = a gain
+
+
+def test_crash_hurts_aggressive_more_than_conservative():
+    def loss_for(bucket):
+        return crash_test(
+            amount=10_00_000,
+            allocation=goal_allocation(bucket, years_to_goal=20),
+            split=equity_split(bucket),
+        ).loss
+
+    assert loss_for(RiskLevel.AGGRESSIVE) > loss_for(RiskLevel.MODERATE)
+    assert loss_for(RiskLevel.MODERATE) > loss_for(RiskLevel.CONSERVATIVE)
+
+
+def test_crash_test_with_no_money_loses_nothing():
+    result = crash_test(
+        amount=0,
+        allocation=Allocation(equity=0.85, debt=0.10, gold=0.05),
+        split=equity_split(RiskLevel.AGGRESSIVE),
+    )
+    assert result.loss == 0
+    assert result.loss_pct == 0
+
+
+def test_crash_test_rejects_negative_amount():
+    with pytest.raises(ValueError):
+        crash_test(
+            amount=-1,
+            allocation=Allocation(equity=0.85, debt=0.10, gold=0.05),
+            split=equity_split(RiskLevel.AGGRESSIVE),
+        )
+
+
+def test_severe_crash_scenario_values():
+    assert SEVERE_CRASH.small_cap == pytest.approx(-0.55)
+    assert SEVERE_CRASH.gold == pytest.approx(0.10)

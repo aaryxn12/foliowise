@@ -8,8 +8,8 @@ Estimates are focused hours. Status key: `[x]` done, `[ ]` to do.
 | # | Milestone | Status | Est. hours left |
 |---|---|---|---|
 | 1 | Maths engine (`planner/sip.py`) | Done | 0 |
-| 2 | Investment policy and allocation (`planner/allocation.py`) | In progress | 1 |
-| 3 | Fund data and screening | Not started | 7 |
+| 2 | Investment policy and allocation (`planner/allocation.py`) | Done | 0 |
+| 3 | Fund data and screening | Next | 7 |
 | 4 | Plan builder (form in, full plan out) | Not started | 3 |
 | 5 | Agent (LangGraph) | Not started | 7 |
 | 6 | Fund Q&A with RAG | Not started | 4 |
@@ -18,7 +18,7 @@ Estimates are focused hours. Status key: `[x]` done, `[ ]` to do.
 | 9 | AWS deploy (CDK) and CI/CD | Not started | 6 |
 | 10 | Frontend (Angular) | Not started | 8 |
 | 11 | Launch polish | Not started | 3 |
-| | **Total remaining** | | **~45** |
+| | **Total remaining** | | **~44** |
 
 ---
 
@@ -31,6 +31,7 @@ Pure time-value-of-money functions, test-first.
 - [x] `retirement_corpus` (year-by-year sum; handles return == inflation)
 - [x] `check_affordability` returning `Affordability`
 - [x] 16 tests incl. month-by-month simulation and closed-form cross-check
+- Test count after milestone 2: 78
 - [x] Commit and push; Ruff format + check clean
 
 ## 2. Investment policy and allocation
@@ -45,8 +46,8 @@ Turn the CFA policy tables into config plus code that applies them.
 - [x] `goal_allocation` with glide path (per goal)
 - [x] `expected_return` per goal from its mix
 - [x] Existing investments grown at type-specific rates (MF, FD, PPF, EPF)
-- [ ] Emergency fund check (e.g. 6 x monthly outgoings)
-- [ ] Crash test on the user's actual money
+- [x] Emergency fund check (6 x monthly outgoings)
+- [x] Crash test (2008-style scenario) on a given amount and allocation
 
 ## 3. Fund data and screening
 - [ ] Curate ~40-50 direct-growth funds across categories (scheme codes)
