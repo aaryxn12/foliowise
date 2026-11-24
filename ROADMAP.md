@@ -9,7 +9,7 @@ Estimates are focused hours. Status key: `[x]` done, `[ ]` to do.
 |---|---|---|---|
 | 1 | Maths engine (`planner/sip.py`) | Done | 0 |
 | 2 | Investment policy and allocation (`planner/allocation.py`) | Done | 0 |
-| 3 | Fund data and screening | Next | 7 |
+| 3 | Fund data and screening | In progress | 5 |
 | 4 | Plan builder (form in, full plan out) | Not started | 3 |
 | 5 | Agent (LangGraph) | Not started | 7 |
 | 6 | Fund Q&A with RAG | Not started | 4 |
@@ -18,7 +18,7 @@ Estimates are focused hours. Status key: `[x]` done, `[ ]` to do.
 | 9 | AWS deploy (CDK) and CI/CD | Not started | 6 |
 | 10 | Frontend (Angular) | Not started | 8 |
 | 11 | Launch polish | Not started | 3 |
-| | **Total remaining** | | **~44** |
+| | **Total remaining** | | **~42** |
 
 ---
 
@@ -50,10 +50,10 @@ Turn the CFA policy tables into config plus code that applies them.
 - [x] Crash test (illustrative severe crash) on a given amount and allocation
 
 ## 3. Fund data and screening
-- [ ] Curate ~40-50 direct-growth funds across categories (scheme codes)
-- [ ] NAV fetcher: mfapi.in with AMFI NAVAll.txt fallback
+- [x] Fund universe: every eligible direct-growth fund per category (AMFI categories, 5+ yrs history) via `scripts/fetch_funds.py`: 111 funds (index 15, flexi 27, mid 21, small 22, debt 17, gold 9)
+- [x] NAV history download (mfapi.in), same script; ~14 MB, gitignored
 - [ ] Metrics from NAV history: rolling 5-yr consistency vs index, Sharpe, max drawdown
-- [ ] Expense ratio and AUM source for the curated list
+- [ ] Expense ratios merged in from AMFI TER disclosure (minimum-AUM filter optional)
 - [ ] Filters + weighted percentile score; top pick + 2 alternatives per category
 - [ ] Rupee split: round to Rs500, exact total, minimum SIPs, fund count scales with SIP size
 - [ ] Data refresh script that writes a metrics file (nightly schedule comes in milestone 9)
