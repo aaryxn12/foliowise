@@ -34,6 +34,17 @@ python scripts/fetch_funds.py            # reuses NAV files already downloaded
 python scripts/fetch_funds.py --refresh  # downloads every NAV file again
 ```
 
+Expense ratios come from AMFI's TER file, which has to be downloaded by hand
+(about 3 MB, once a month is enough):
+
+1. Open https://www.amfiindia.com/ter-of-mf-schemes
+2. Choose the current financial year and latest month, with Fund Type, Category
+   and Mutual Fund all set to "All", then click Go and download the Excel file.
+3. Save it as `data/ter/ter-of-mf-schemes.xlsx` (replacing the old one).
+
+The file has no scheme code or ISIN, so funds are matched by name
+(`planner/expense_ratios.py`). The script stops if any fund has no match.
+
 Then recompute the metrics (run as a module so it can import `planner`):
 
 ```bash
@@ -64,8 +75,17 @@ from the file's own Plan and Option columns.
 |---|---|---|
 | `fund_universe.csv` | yes | Funds that passed every check |
 | `rejected.csv` | yes | Candidates that failed a check, with the reason |
-| `fund_metrics.csv` | yes | Metrics per fund from `python -m scripts.compute_metrics`: trailing 5-yr CAGR, volatility, Sharpe and max drawdown; consistency vs the category median over every 5-yr window, and how many windows that used |
+| `fund_metrics.csv` | yes | Metrics per fund from `python -m scripts.compute_metrics`: trailing 5-yr CAGR, volatility, Sharpe and max drawdown; consistency vs the category median over every 5-yr window, how many windows that used, and the latest direct-plan expense ratio (%) |
+| `ter/ter-of-mf-schemes.xlsx` | no (gitignored) | AMFI's daily TER disclosure, one row per scheme per day |
 | `nav/<scheme_code>.json` | no (gitignored) | Raw NAV history per fund, about 15 MB in total |
 
 Still to add: expense ratios (from AMFI's TER disclosure), merged in by a later
 step.
+
+## Known limitations
+
+- **Survivorship bias:** funds that closed or merged are missing, so category
+  medians are a little flattered.
+- **Gold fund expense ratios are incomplete:** gold funds here are funds of
+  funds, and the TER file shows only the outer fund's fee, not the fee of the
+  gold ETF underneath. Returns are unaffected (the NAV is after all fees).

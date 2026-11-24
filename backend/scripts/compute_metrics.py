@@ -1,7 +1,8 @@
 """Compute fund metrics for every fund in the universe.
 
 Reads data/fund_universe.csv and the NAV files in data/nav/ (both written by
-fetch_funds.py) and writes one row of metrics per fund.
+fetch_funds.py), plus AMFI's expense ratio file in data/ter/ (downloaded by
+hand, see data/README.md), and writes one row of metrics per fund.
 
 Two passes, because consistency needs the whole category:
 1. Rolling 5-year returns for every fund, then each category's median per date.
@@ -25,6 +26,7 @@ from pathlib import Path
 
 import pandas as pd
 
+from planner.expense_ratios import latest_direct_ter, scheme_name_key
 from planner.metrics import (
     annualised_volatility,
     cagr,
@@ -42,6 +44,7 @@ DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 NAV_DIR = DATA_DIR / "nav"
 UNIVERSE_FILE = DATA_DIR / "fund_universe.csv"
 METRICS_FILE = DATA_DIR / "fund_metrics.csv"
+TER_FILE = DATA_DIR / "ter" / "ter-of-mf-schemes.xlsx"
 
 WINDOW_YEARS = 5  # rolling-return window, and the trailing period for the other metrics
 
@@ -56,6 +59,26 @@ def load_monthly_navs(scheme_code: str) -> pd.Series:
     """Month-end NAVs for one fund, from its saved mfapi file."""
     payload = json.loads((NAV_DIR / f"{scheme_code}.json").read_text(encoding="utf-8"))
     return month_end_navs(nav_series_from_mfapi(payload))
+
+
+def load_expense_ratios(funds: list[dict]) -> dict[str, float]:
+    """Direct-plan TER (in %) for every fund, keyed by scheme code.
+
+    Stops with an error naming the funds that have no TER, rather than writing
+    a metrics file with gaps.
+    """
+    ter_by_name = latest_direct_ter(pd.read_excel(TER_FILE))
+    missing = [
+        fund["scheme_name"]
+        for fund in funds
+        if scheme_name_key(fund["scheme_name"]) not in ter_by_name
+    ]
+    if missing:
+        raise SystemExit(f"No TER found for {len(missing)} funds, e.g. {missing[:3]}")
+    return {
+        fund["scheme_code"]: ter_by_name[scheme_name_key(fund["scheme_name"])]
+        for fund in funds
+    }
 
 
 def fund_metrics(navs: pd.Series, median_rolling: pd.Series) -> dict:
@@ -77,13 +100,18 @@ def fund_metrics(navs: pd.Series, median_rolling: pd.Series) -> dict:
 
 def main() -> None:
     funds = load_universe()
-    navs_by_code = {fund["scheme_code"]: load_monthly_navs(fund["scheme_code"]) for fund in funds}
+    expense_ratios = load_expense_ratios(funds)
+    navs_by_code = {
+        fund["scheme_code"]: load_monthly_navs(fund["scheme_code"]) for fund in funds
+    }
 
     # Pass 1: each category's median rolling return, per window end date.
     medians = {}
     for category in sorted({fund["category"] for fund in funds}):
         rolling_by_fund = {
-            fund["scheme_code"]: rolling_returns(navs_by_code[fund["scheme_code"]], WINDOW_YEARS)
+            fund["scheme_code"]: rolling_returns(
+                navs_by_code[fund["scheme_code"]], WINDOW_YEARS
+            )
             for fund in funds
             if fund["category"] == category
         }
@@ -100,6 +128,7 @@ def main() -> None:
                 "scheme_name": fund["scheme_name"],
                 "category": fund["category"],
                 **fund_metrics(navs, medians[fund["category"]]),
+                "expense_ratio": expense_ratios[fund["scheme_code"]],
                 "nav_as_of": fund["latest_nav_date"],
                 "computed_on": today,
             }
@@ -113,7 +142,9 @@ def main() -> None:
     print(f"Wrote {len(rows)} funds to {METRICS_FILE.relative_to(DATA_DIR.parent)}")
     for category, median in medians.items():
         if median.empty:
-            print(f"  {category}: no category median (too few funds with 5-year windows)")
+            print(
+                f"  {category}: no category median (too few funds with 5-year windows)"
+            )
         else:
             print(
                 f"  {category}: median from {median.index[0]:%b %Y} to "
