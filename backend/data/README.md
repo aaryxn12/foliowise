@@ -34,6 +34,12 @@ python scripts/fetch_funds.py            # reuses NAV files already downloaded
 python scripts/fetch_funds.py --refresh  # downloads every NAV file again
 ```
 
+Then recompute the metrics (run as a module so it can import `planner`):
+
+```bash
+python -m scripts.compute_metrics
+```
+
 Check `rejected.csv` afterwards: it lists every candidate that failed a check
 and why.
 
@@ -58,6 +64,7 @@ from the file's own Plan and Option columns.
 |---|---|---|
 | `fund_universe.csv` | yes | Funds that passed every check |
 | `rejected.csv` | yes | Candidates that failed a check, with the reason |
+| `fund_metrics.csv` | yes | Metrics per fund from `python -m scripts.compute_metrics`: trailing 5-yr CAGR, volatility, Sharpe and max drawdown; consistency vs the category median over every 5-yr window, and how many windows that used |
 | `nav/<scheme_code>.json` | no (gitignored) | Raw NAV history per fund, about 15 MB in total |
 
 Still to add: expense ratios (from AMFI's TER disclosure), merged in by a later

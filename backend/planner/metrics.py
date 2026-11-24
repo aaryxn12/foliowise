@@ -7,6 +7,10 @@ import pandas as pd
 # Return on a safe investment (roughly government bonds); an assumption.
 RISK_FREE_RATE = 0.065
 
+# A category median for a date needs at least this many funds, or one or two
+# funds would decide what "typical" means.
+MIN_FUNDS_FOR_MEDIAN = 5
+
 MONTHS_PER_YEAR = 12
 
 
@@ -73,3 +77,22 @@ def consistency(fund_rolling: pd.Series, median_rolling: pd.Series) -> float:
     if fund.empty:
         return math.nan  # no overlapping windows, so nothing to compare
     return float((fund > median).mean())
+
+
+def trailing_years(navs: pd.Series, years: int) -> pd.Series:
+    """The last `years` years of NAVs, counted back from the latest date."""
+    start = navs.index[-1] - pd.DateOffset(years=years)
+    return navs[navs.index >= start]
+
+
+def category_median(
+    rolling_by_fund: dict[int, pd.Series], min_funds: int = MIN_FUNDS_FOR_MEDIAN
+) -> pd.Series:
+    """Median rolling return across a category's funds, for each window end date.
+
+    Dates where fewer than `min_funds` funds have a window are dropped.
+    """
+    frame = pd.DataFrame(rolling_by_fund)  # one column per fund, one row per date
+    medians = frame.median(axis=1)  # typical fund in each row; NaN cells are skipped
+    enough_funds = frame.count(axis=1) >= min_funds  # True/False per row
+    return medians[enough_funds]

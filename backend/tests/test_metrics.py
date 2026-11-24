@@ -7,12 +7,14 @@ from planner.metrics import (
     RISK_FREE_RATE,
     annualised_volatility,
     cagr,
+    category_median,
     consistency,
     max_drawdown,
     month_end_navs,
     nav_series_from_mfapi,
     rolling_returns,
     sharpe_ratio,
+    trailing_years,
 )
 
 
@@ -162,3 +164,46 @@ def test_consistency_only_compares_windows_both_series_have():
         index=pd.date_range("2021-01-31", periods=4, freq="ME"),
     )
     assert consistency(fund, median) == pytest.approx(0.50)  # shared: Mar, Apr
+
+
+# --- Trailing window: the same recent period for every fund -------------------
+
+
+def test_trailing_years_keeps_the_last_n_years_inclusive():
+    """10 years of month-ends; the last 5 years run Jan 2020 to Jan 2025 = 61 points."""
+    navs = steady_growth(0.01, months=120)  # Jan 2015 .. Jan 2025
+    recent = trailing_years(navs, 5)
+    assert len(recent) == 61
+    assert recent.index[0] == pd.Timestamp("2020-01-31")
+    assert recent.index[-1] == navs.index[-1]
+
+
+# --- Category median: the "typical fund" for each window -----------------------
+
+
+def test_category_median_per_date():
+    dates = pd.date_range("2021-01-31", periods=2, freq="ME")
+    rolling = {
+        code: pd.Series(values, index=dates)
+        for code, values in {
+            1: [0.10, 0.20],
+            2: [0.12, 0.18],
+            3: [0.14, 0.16],
+        }.items()
+    }
+    median = category_median(rolling, min_funds=3)
+    assert list(median) == pytest.approx([0.12, 0.18])
+    assert list(median.index) == list(dates)
+
+
+def test_category_median_drops_dates_with_too_few_funds():
+    """Fund 3 starts a month later, so January has only 2 funds and is dropped."""
+    jan_feb = pd.date_range("2021-01-31", periods=2, freq="ME")
+    rolling = {
+        1: pd.Series([0.10, 0.10], index=jan_feb),
+        2: pd.Series([0.20, 0.20], index=jan_feb),
+        3: pd.Series([0.30], index=[pd.Timestamp("2021-02-28")]),
+    }
+    median = category_median(rolling, min_funds=3)
+    assert list(median.index) == [pd.Timestamp("2021-02-28")]
+    assert median.iloc[0] == pytest.approx(0.20)
