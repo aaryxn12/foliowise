@@ -1,7 +1,8 @@
 import pytest
 
 from planner.allocation import RiskLevel
-from planner.plan import risk_profile
+from planner.inputs import BigGoal
+from planner.plan import big_goal_target, retirement_target, risk_profile
 from tests.sample_forms import priya
 
 # --- Piece 1: risk profile --------------------------------------------------------
@@ -40,3 +41,32 @@ def test_a_cautious_quiz_wins_even_with_strong_finances():
     assert profile.ability == RiskLevel.AGGRESSIVE
     assert profile.willingness == RiskLevel.CONSERVATIVE
     assert profile.bucket == RiskLevel.CONSERVATIVE
+
+
+# --- Piece 2: what each goal will cost --------------------------------------------
+
+
+def test_house_cost_after_seven_years_of_inflation():
+    """Rs20L today at 6% for 7 years = 20L x 1.06^7, about Rs30,07,260."""
+    target = big_goal_target(BigGoal(kind="house", cost_today=20_00_000, years_away=7))
+    assert target.name == "house"
+    assert target.years_away == 7
+    assert target.target_amount == pytest.approx(20_00_000 * 1.06**7)
+
+
+def test_priya_needs_about_five_crore_at_fifty():
+    """Rs50,000/month today -> Rs19,24,281 a year at 50; paid for 35 years
+    (50 to 85) with 6% inflation and 8% return -> Rs4,98,93,481."""
+    target = retirement_target(priya())
+    assert target.name == "retirement"
+    assert target.years_away == 20
+    assert target.target_amount == pytest.approx(4_98_93_481, rel=1e-6)
+
+
+def test_retiring_later_needs_a_bigger_yearly_amount_but_fewer_years():
+    """Retiring at 55 instead of 50: 5 more years of inflation on each year's
+    expense, but 5 fewer years to pay for. Here the inflation effect wins."""
+    at_50 = retirement_target(priya()).target_amount
+    at_55 = retirement_target(priya(retirement_age=55)).target_amount
+    assert retirement_target(priya(retirement_age=55)).years_away == 25
+    assert at_55 > at_50

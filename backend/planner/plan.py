@@ -14,7 +14,13 @@ from planner.allocation import (
     risk_bucket,
     willingness_from_quiz,
 )
-from planner.inputs import PlanInput
+from planner.inputs import BigGoal, PlanInput
+from planner.sip import future_cost, retirement_corpus
+
+# Planning assumptions (not asked in the form; the dashboard can change them later).
+INFLATION = 0.06  # yearly rise in prices
+LIFE_EXPECTANCY = 85  # plan retirement income up to this age
+POST_RETIREMENT_RETURN = 0.08  # a safer mix once retired
 
 
 @dataclass(frozen=True)
@@ -46,4 +52,38 @@ def risk_profile(plan_input: PlanInput) -> RiskProfile:
         ability=ability,
         bucket=bucket,
         emergency_fund=emergency,
+    )
+
+
+@dataclass(frozen=True)
+class GoalTarget:
+    """What a goal will cost on the day it arrives."""
+
+    name: str  # "retirement", or the big goal's kind, e.g. "house"
+    years_away: int
+    target_amount: float  # rupees needed then, after inflation
+
+
+def big_goal_target(goal: BigGoal) -> GoalTarget:
+    """The big goal's cost after inflation, e.g. a Rs20L house in 7 years -> ~Rs30L."""
+    name = goal.kind
+    years_away = goal.years_away
+    target_amount = future_cost(goal.cost_today, INFLATION, years_away)
+    return GoalTarget(name=name, years_away=years_away, target_amount=target_amount)
+
+
+def retirement_target(plan_input: PlanInput) -> GoalTarget:
+    """Money needed on retirement day to pay expenses up to LIFE_EXPECTANCY."""
+    years_to_retire = plan_input.retirement_age - plan_input.age
+    first_year_expense = future_cost(
+        12 * plan_input.retirement_monthly_expense, INFLATION, years_to_retire
+    )
+    corpus = retirement_corpus(
+        first_year_expense=first_year_expense,
+        years_in_retirement=LIFE_EXPECTANCY - plan_input.retirement_age,
+        inflation=INFLATION,
+        post_retirement_return=POST_RETIREMENT_RETURN,
+    )
+    return GoalTarget(
+        name="retirement", years_away=years_to_retire, target_amount=corpus
     )
