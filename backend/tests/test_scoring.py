@@ -12,7 +12,9 @@ from planner.scoring import (
 )
 
 
-def fund(code, category, *, consistency=0.5, windows=100, sharpe=0.5, drawdown=-0.2, fee=1.0):
+def fund(
+    code, category, *, consistency=0.5, windows=100, sharpe=0.5, drawdown=-0.2, fee=1.0
+):
     """One row of fund_metrics.csv, with average values unless told otherwise."""
     return {
         "scheme_code": code,
@@ -97,7 +99,9 @@ def test_funds_are_ranked_only_against_their_own_category():
     )
     scored = score_funds(metrics).set_index("scheme_code")
     assert scored.loc[1, "expense_ratio_pct"] == pytest.approx(1.0)  # alone in debt
-    assert scored.loc[2, "expense_ratio_pct"] == pytest.approx(1.0)  # cheapest small cap
+    assert scored.loc[2, "expense_ratio_pct"] == pytest.approx(
+        1.0
+    )  # cheapest small cap
 
 
 def test_score_funds_does_not_change_its_input():
@@ -119,7 +123,9 @@ def test_shortlist_keeps_the_top_three_per_category_in_order():
     flexi = top[top["category"] == "flexi_cap"]
     assert list(flexi["scheme_code"]) == [5, 4, 3]  # highest Sharpe first
     assert list(flexi["rank"]) == [1, 2, 3]
-    assert list(top[top["category"] == "gold"]["scheme_code"]) == [9]  # only one gold fund
+    assert list(top[top["category"] == "gold"]["scheme_code"]) == [
+        9
+    ]  # only one gold fund
 
 
 def test_shortlist_breaks_ties_with_the_lower_fee():

@@ -22,7 +22,9 @@ PRIOR_WINDOWS = 12
 SHORTLIST_SIZE = 3  # top pick + 2 alternatives per category
 
 
-def shrunk_consistency(consistency: float, windows: int, prior_windows: int = PRIOR_WINDOWS) -> float:
+def shrunk_consistency(
+    consistency: float, windows: int, prior_windows: int = PRIOR_WINDOWS
+) -> float:
     """Consistency pulled towards 0.5, strongly when based on few windows.
 
     adjusted = (wins + prior_windows / 2) / (windows + prior_windows),
@@ -31,7 +33,7 @@ def shrunk_consistency(consistency: float, windows: int, prior_windows: int = PR
     if windows == 0:
         return 0.5
     wins = consistency * windows
-    return (wins + prior_windows / 2)/(windows + prior_windows)
+    return (wins + prior_windows / 2) / (windows + prior_windows)
 
 
 def score_funds(metrics: pd.DataFrame) -> pd.DataFrame:
@@ -53,7 +55,9 @@ def score_funds(metrics: pd.DataFrame) -> pd.DataFrame:
     # Drawdowns are negative: -0.15 beats -0.30, so higher is still better.
     scored["max_drawdown_pct"] = by_category["max_drawdown_5y"].rank(pct=True)
     # A lower fee is better, so rank in reverse.
-    scored["expense_ratio_pct"] = by_category["expense_ratio"].rank(pct=True, ascending=False)
+    scored["expense_ratio_pct"] = by_category["expense_ratio"].rank(
+        pct=True, ascending=False
+    )
 
     scored["score"] = 100 * sum(
         weight * scored[f"{metric}_pct"] for metric, weight in WEIGHTS.items()

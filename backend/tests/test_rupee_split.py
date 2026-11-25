@@ -55,7 +55,10 @@ def test_split_adds_up_exactly_in_whole_steps(total):
 def test_small_sip_drops_tiny_categories():
     """Rs2,000: flexi 420, mid 280, small 140 and gold 100 are under Rs500, so dropped.
     Large (28%) and debt (25%) share it all: 1,056 and 944, rounded to 1,000 each."""
-    assert split_amount(2_000, PRIYA_SHARES) == {"large_cap_index": 1_000, "debt": 1_000}
+    assert split_amount(2_000, PRIYA_SHARES) == {
+        "large_cap_index": 1_000,
+        "debt": 1_000,
+    }
 
 
 def test_tiny_sip_goes_entirely_to_the_biggest_share():

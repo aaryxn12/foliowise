@@ -21,7 +21,9 @@ TER_MAX_AGE = timedelta(days=35)  # AMFI publishes a new month's TER file monthl
 def warn_if_ter_file_is_old() -> None:
     """Print a reminder to download a new TER file when the current one is stale."""
     if not compute_metrics.TER_FILE.exists():
-        raise SystemExit(f"Missing {compute_metrics.TER_FILE}: download it first (see data/README.md)")
+        raise SystemExit(
+            f"Missing {compute_metrics.TER_FILE}: download it first (see data/README.md)"
+        )
     saved = datetime.fromtimestamp(compute_metrics.TER_FILE.stat().st_mtime)
     if datetime.now() - saved > TER_MAX_AGE:
         print(
