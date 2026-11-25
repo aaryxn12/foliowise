@@ -2,7 +2,7 @@ import pytest
 
 from planner.allocation import RiskLevel
 from planner.inputs import BigGoal
-from planner.plan import big_goal_target, retirement_target, risk_profile
+from planner.plan import big_goal_target, goal_mix, retirement_target, risk_profile
 from tests.sample_forms import priya
 
 # --- Piece 1: risk profile --------------------------------------------------------
@@ -70,3 +70,31 @@ def test_retiring_later_needs_a_bigger_yearly_amount_but_fewer_years():
     at_55 = retirement_target(priya(retirement_age=55)).target_amount
     assert retirement_target(priya(retirement_age=55)).years_away == 25
     assert at_55 > at_50
+
+
+# --- Piece 3a: how each goal is invested -------------------------------------------
+
+
+def test_retirement_twenty_years_away_is_mostly_equity():
+    """Moderate, 20 years: 70/25/5 -> 0.70 x 12% + 0.25 x 7% + 0.05 x 8% = 10.55%."""
+    mix = goal_mix(RiskLevel.MODERATE, 20)
+    assert (
+        mix.allocation.equity,
+        mix.allocation.debt,
+        mix.allocation.gold,
+    ) == pytest.approx((0.70, 0.25, 0.05))
+    assert mix.expected_return == pytest.approx(0.1055)
+
+
+def test_house_seven_years_away_is_safer():
+    """Moderate, 7 years: 50/45/5 -> 9.55%."""
+    mix = goal_mix(RiskLevel.MODERATE, 7)
+    assert mix.allocation.equity == pytest.approx(0.50)
+    assert mix.expected_return == pytest.approx(0.0955)
+
+
+def test_goal_two_years_away_is_nearly_all_debt():
+    """Moderate, under 3 years: 5% equity, no gold, 95% debt -> 7.25%."""
+    mix = goal_mix(RiskLevel.MODERATE, 2)
+    assert mix.allocation.gold == 0
+    assert mix.expected_return == pytest.approx(0.0725)

@@ -7,10 +7,15 @@ build_plan (coming next) calls them in order.
 from dataclasses import dataclass
 
 from planner.allocation import (
+    DEFAULT_RETURN_ASSUMPTIONS,
+    Allocation,
     EmergencyFundStatus,
+    ReturnAssumptions,
     RiskLevel,
     ability_level,
     emergency_fund_check,
+    expected_return,
+    goal_allocation,
     risk_bucket,
     willingness_from_quiz,
 )
@@ -86,4 +91,24 @@ def retirement_target(plan_input: PlanInput) -> GoalTarget:
     )
     return GoalTarget(
         name="retirement", years_away=years_to_retire, target_amount=corpus
+    )
+
+
+@dataclass(frozen=True)
+class GoalMix:
+    """How a goal's money is invested, and the yearly return that mix assumes."""
+
+    allocation: Allocation  # equity / debt / gold shares
+    expected_return: float  # e.g. 0.1055 for 10.55% a year
+
+
+def goal_mix(
+    bucket: RiskLevel,
+    years_away: int,
+    assumptions: ReturnAssumptions = DEFAULT_RETURN_ASSUMPTIONS,
+) -> GoalMix:
+    """The mix for a goal this far away, at this risk level, and its expected return."""
+    allocation = goal_allocation(bucket, years_away)
+    return GoalMix(
+        allocation=allocation, expected_return=expected_return(allocation, assumptions)
     )
