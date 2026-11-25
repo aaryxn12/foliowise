@@ -9,7 +9,7 @@ Estimates are focused hours. Status key: `[x]` done, `[ ]` to do.
 |---|---|---|---|
 | 1 | Maths engine (`planner/sip.py`) | Done | 0 |
 | 2 | Investment policy and allocation (`planner/allocation.py`) | Done | 0 |
-| 3 | Fund data and screening | In progress (4 of 7) | 3.5 |
+| 3 | Fund data and screening | Done | 0 |
 | 4 | Plan builder (form in, full plan out) | Not started | 3 |
 | 5 | Agent (LangGraph) | Not started | 7 |
 | 6 | Fund Q&A with RAG | Not started | 4 |
@@ -18,7 +18,7 @@ Estimates are focused hours. Status key: `[x]` done, `[ ]` to do.
 | 9 | AWS deploy (CDK) and CI/CD | Not started | 6 |
 | 10 | Frontend (Angular) | Not started | 8 |
 | 11 | Launch polish | Not started | 3 |
-| | **Total remaining** | | **~40** |
+| | **Total remaining** | | **~36** |
 
 ---
 
@@ -54,10 +54,10 @@ Turn the CFA policy tables into config plus code that applies them.
 - [x] NAV history download (mfapi.in), same script; ~14 MB, gitignored
 - [x] Metric functions in `planner/metrics.py`: max drawdown, CAGR, volatility, Sharpe, 5-yr rolling returns, consistency vs category median (16 tests; 94 in total)
 - [x] Metrics script `python -m scripts.compute_metrics`: all 111 funds, category medians (min 5 funds per date), trailing 5-yr metrics, `data/fund_metrics.csv` (97 tests)
-- [ ] Expense ratios merged in from AMFI TER disclosure (minimum-AUM filter optional). File downloaded to `data/ter/`; matches all 111 funds by normalised name (no code/ISIN in the file)
-- [ ] Filters + weighted percentile score; top pick + 2 alternatives per category
-- [ ] Rupee split: round to Rs500, exact total, minimum SIPs, fund count scales with SIP size
-- [ ] One refresh command (fetch funds + metrics); nightly schedule comes in milestone 9
+- [x] Expense ratios from AMFI's TER file (`planner/expense_ratios.py`): latest direct-plan TER, matched by normalised name (all 111, collisions raise); file in `data/ter/`, gitignored
+- [x] Scoring (`planner/scoring.py`): percentile ranks within category, consistency shrunk towards 50% (Bayesian average, 12 prior windows), weights 35/25/25/15, top pick + 2 alternatives (117 tests)
+- [x] Rupee split (`planner/rupee_split.py`): total rounded up to Rs500, categories under Rs500 dropped (small SIPs get fewer funds), largest remainder method so amounts add up exactly (133 tests)
+- [x] One refresh command `python -m scripts.refresh_data` (fetch funds + metrics, warns on a stale TER file); nightly schedule comes in milestone 9
 
 ## 4. Plan builder
 - [ ] Input model for the full form (Pydantic) with validation (e.g. expenses > take-home)

@@ -27,7 +27,14 @@ so a category's history still carries some survivorship bias.
 
 ## How to refresh
 
-From the `backend` folder:
+The quick way, from the `backend` folder (needs internet; warns if the TER
+file below is more than a month old):
+
+```bash
+python -m scripts.refresh_data
+```
+
+Or step by step:
 
 ```bash
 python scripts/fetch_funds.py            # reuses NAV files already downloaded

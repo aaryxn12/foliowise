@@ -1,112 +1,112 @@
 scheme_code,scheme_name,category,cagr_5y,volatility_5y,sharpe_5y,max_drawdown_5y,consistency,windows_compared,expense_ratio,nav_as_of,computed_on
-119533,Aditya Birla Sun Life Corporate Bond Fund - Direct Plan - GROWTH,debt,0.0631,0.0173,-0.111,-0.0083,0.916,107,0.34,2026-11-20,2026-11-24
-135916,BANDHAN Corporate Bond Fund - Direct Plan - Growth,debt,0.061,0.0145,-0.276,-0.0128,0.07,71,0.36,2026-11-20,2026-11-24
-144646,DSP Corporate Bond Fund - Direct Plan - Growth,debt,0.061,0.016,-0.253,-0.0245,0.0,39,0.29,2026-11-20,2026-11-24
-118987,HDFC Corporate Bond Fund - Direct Plan - Growth Option,debt,0.0615,0.0186,-0.188,-0.0104,0.86,107,0.38,2026-11-20,2026-11-24
-120692,ICICI Prudential Corporate Bond Fund - Direct Plan - Growth,debt,0.0666,0.0134,0.121,-0.0049,0.664,107,0.37,2026-11-20,2026-11-24
-118814,Nippon India Corporate Bond Fund - Direct Plan - Growth Option,debt,0.0673,0.0154,0.148,-0.0047,0.318,107,0.37,2026-11-20,2026-11-24
-138330,PGIM India Corporate Bond Fund - Direct Plan - Direct Growth,debt,0.0626,0.0147,-0.164,-0.005,0.493,69,0.37,2026-11-20,2026-11-24
-146215,SBI Corporate Bond Fund - Direct Plan - Growth,debt,0.0628,0.0149,-0.15,-0.0058,0.206,34,0.37,2026-11-20,2026-11-24
-119621,Sundaram Corporate Bond Fund - Direct Plan - GROWTH,debt,0.0606,0.0136,-0.326,-0.0043,0.589,107,0.33,2026-11-20,2026-11-24
-143241,Union Corporate Bond Fund - Direct Plan - Growth Option,debt,0.0578,0.017,-0.423,-0.0104,0.0,42,0.41,2026-11-20,2026-11-24
-120564,Aditya Birla Sun Life Flexi Cap Fund - Direct Plan - GROWTH,flexi_cap,0.1358,0.1447,0.489,-0.1624,0.617,107,0.89,2026-11-20,2026-11-24
-118424,BANDHAN Flexi Cap Fund - Direct Plan - Growth,flexi_cap,0.1138,0.141,0.346,-0.1565,0.112,107,1.5,2026-11-20,2026-11-24
-148404,BANK OF INDIA FLEXI CAP FUND - Direct Plan - Growth,flexi_cap,0.1719,0.1749,0.611,-0.2224,1.0,17,0.9,2026-11-20,2026-11-24
-119076,DSP Flexi Cap Fund - Direct Plan - Growth,flexi_cap,0.1166,0.1579,0.327,-0.1706,0.729,107,0.86,2026-11-20,2026-11-24
-140353,Edelweiss Flexi Cap Fund - Direct Plan - Growth,flexi_cap,0.1452,0.152,0.528,-0.179,0.902,61,0.76,2026-11-20,2026-11-24
-118535,Franklin India Flexi Cap Fund - Direct Plan - Growth,flexi_cap,0.1311,0.1437,0.46,-0.1527,0.598,107,0.98,2026-11-20,2026-11-24
-118955,HDFC Flexi Cap Fund - Direct Plan - Growth Option,flexi_cap,0.1894,0.1365,0.911,-0.1237,0.551,107,0.74,2026-11-20,2026-11-24
-120264,LIC MF Flexi Cap Fund - Direct Plan - Growth,flexi_cap,0.1126,0.1565,0.304,-0.2199,0.0,107,1.78,2026-11-20,2026-11-24
-129046,Motilal Oswal Flexi Cap Fund - Direct Plan - Growth,flexi_cap,0.1478,0.1619,0.511,-0.192,0.217,92,1.14,2026-11-20,2026-11-24
-143793,Navi Flexi Cap Fund - Direct Plan - Growth,flexi_cap,0.1247,0.1506,0.396,-0.1866,0.39,41,0.69,2026-11-20,2026-11-24
-149094,Nippon India Flexi Cap Fund - Direct Plan - Growth Option,flexi_cap,0.1198,0.1538,0.356,-0.1868,0.25,4,0.65,2026-11-20,2026-11-24
-133839,PGIM India Flexi Cap Fund - Direct Plan - Direct Growth,flexi_cap,0.0994,0.1466,0.235,-0.1597,0.815,81,0.81,2026-11-20,2026-11-24
-122639,Parag Parikh Flexi Cap Fund - Direct Plan - Growth,flexi_cap,0.1242,0.1092,0.542,-0.1401,0.932,103,0.68,2026-11-20,2026-11-24
-120843,Quant Flexi Cap Fund - Direct Plan - Growth Option,flexi_cap,0.1536,0.1799,0.493,-0.2397,0.888,107,1.12,2026-11-20,2026-11-24
-119718,SBI FLEXICAP FUND - Direct Plan - Growth,flexi_cap,0.0958,0.133,0.232,-0.1506,0.299,107,1.25,2026-11-20,2026-11-24
-144905,Shriram Flexi Cap Fund - Direct Plan - Growth,flexi_cap,0.0936,0.1577,0.181,-0.2267,0.0,38,1.07,2026-11-20,2026-11-24
-144546,Tata Flexi Cap Fund - Direct Plan - Growth Option,flexi_cap,0.1027,0.1357,0.277,-0.1347,0.0,39,0.88,2026-11-20,2026-11-24
-118883,Taurus Flexi Cap Fund - Direct Plan - Growth,flexi_cap,0.1228,0.1637,0.353,-0.1996,0.0,107,2.66,2026-11-20,2026-11-24
-119292,Union Flexi Cap Fund - Direct Plan - Growth Option,flexi_cap,0.1175,0.1451,0.362,-0.1643,0.542,107,1.44,2026-11-20,2026-11-24
-120662,UTI - Flexi Cap Fund. - Direct Plan - Growth,flexi_cap,0.0588,0.151,-0.041,-0.202,0.336,107,1.17,2026-11-20,2026-11-24
-119620,Aditya Birla Sun Life Midcap Fund - Direct Plan - GROWTH,mid_cap,0.1372,0.1694,0.426,-0.2166,0.0,107,1.2,2026-11-20,2026-11-24
-120505,Axis Midcap Fund - Direct Plan - Growth Option,mid_cap,0.1366,0.1554,0.46,-0.1886,0.523,107,0.77,2026-11-20,2026-11-24
-119071,DSP Midcap Fund - Direct Plan - Growth,mid_cap,0.1239,0.1702,0.346,-0.2093,0.355,107,0.83,2026-11-20,2026-11-24
-140228,Edelweiss Mid Cap Fund - Direct Plan - Growth,mid_cap,0.1857,0.1687,0.715,-0.1805,0.984,61,0.7,2026-11-20,2026-11-24
-118533,Franklin India Mid Cap Fund - Direct Plan - Growth,mid_cap,0.1422,0.1664,0.464,-0.1777,0.262,107,1.14,2026-11-20,2026-11-24
-118989,HDFC Mid Cap Fund - Direct Plan - Growth Option,mid_cap,0.1938,0.1546,0.833,-0.1621,0.729,107,0.73,2026-11-20,2026-11-24
-148733,ITI Mid Cap Fund - Direct Plan - Growth Option,mid_cap,0.1679,0.174,0.592,-0.2205,0.556,9,0.88,2026-11-20,2026-11-24
-118668,Nippon India Growth Mid Cap Fund - Direct Plan - Growth Option,mid_cap,0.1846,0.1665,0.718,-0.1927,0.701,107,0.77,2026-11-20,2026-11-24
-125307,PGIM India Midcap Fund - Direct Plan - Direct Growth,mid_cap,0.1114,0.1576,0.295,-0.1814,0.594,96,0.81,2026-11-20,2026-11-24
-120841,Quant Mid Cap Fund - Direct Plan - Growth Option,mid_cap,0.1493,0.1767,0.477,-0.245,0.617,107,1.17,2026-11-20,2026-11-24
-119716,SBI MIDCAP FUND - Direct Plan - Growth,mid_cap,0.1206,0.1516,0.367,-0.1722,0.299,107,1.01,2026-11-20,2026-11-24
-119581,Sundaram Mid Cap Fund - Direct Plan - GROWTH,mid_cap,0.1724,0.1659,0.648,-0.2009,0.29,107,1.05,2026-11-20,2026-11-24
-119178,Tata Mid Cap Fund - Direct Plan - Growth Option,mid_cap,0.1541,0.1598,0.558,-0.2063,0.449,107,0.81,2026-11-20,2026-11-24
-118872,Taurus Mid Cap Fund - Direct Plan - Growth,mid_cap,0.1306,0.1783,0.368,-0.239,0.234,107,2.35,2026-11-20,2026-11-24
-148073,Union Midcap Fund - Direct Plan - Growth Option,mid_cap,0.1546,0.167,0.536,-0.2005,0.524,21,1.04,2026-11-20,2026-11-24
-120726,UTI - Mid Cap Fund - Direct Plan - Growth,mid_cap,0.1205,0.1657,0.335,-0.2235,0.103,107,1.27,2026-11-20,2026-11-24
-119556,Aditya Birla Sun Life Small Cap Fund - Direct Plan - GROWTH,small_cap,0.1433,0.1853,0.423,-0.2495,0.037,107,1.06,2026-11-20,2026-11-24
-147946,BANDHAN Small Cap Fund - Direct Plan - Growth,small_cap,0.2047,0.1893,0.738,-0.2126,1.0,22,0.63,2026-11-20,2026-11-24
-145678,BANK OF INDIA SMALL CAP FUND - Direct Plan - Growth,small_cap,0.1925,0.1973,0.646,-0.2448,1.0,36,0.82,2026-11-20,2026-11-24
-119212,DSP Small Cap Fund - Direct Plan - Growth,small_cap,0.1657,0.194,0.519,-0.2163,0.486,107,0.84,2026-11-20,2026-11-24
-146196,Edelweiss Small Cap Fund - Direct Plan - Growth,small_cap,0.1623,0.1736,0.561,-0.209,0.971,34,0.63,2026-11-20,2026-11-24
-118525,Franklin India Small Cap Fund - Direct Plan - Growth,small_cap,0.1486,0.1825,0.458,-0.2283,0.299,107,1.06,2026-11-20,2026-11-24
-130503,HDFC Small Cap Fund - Direct Plan - Growth Option,small_cap,0.1439,0.1681,0.469,-0.1953,0.567,90,0.79,2026-11-20,2026-11-24
-147919,ITI Small Cap Fund - Direct Plan - Growth Option,small_cap,0.1966,0.1818,0.724,-0.2093,0.227,22,0.84,2026-11-20,2026-11-24
-120164,Kotak Small Cap Fund - Direct Plan - Growth,small_cap,0.1177,0.1754,0.301,-0.2391,0.636,107,0.6319,2026-11-20,2026-11-24
-118778,Nippon India Small Cap Fund - Direct Plan - Growth Option,small_cap,0.1796,0.1797,0.638,-0.2318,1.0,107,0.69,2026-11-20,2026-11-24
-149019,PGIM India Small Cap Fund - Direct Plan - Direct Growth,small_cap,0.1299,0.1741,0.373,-0.1973,0.0,4,0.92,2026-11-20,2026-11-24
-120828,Quant Small Cap Fund - Direct Plan - Growth Option,small_cap,0.187,0.1898,0.643,-0.2357,0.636,107,0.95,2026-11-20,2026-11-24
-125497,SBI SMALL CAP FUND - Direct Plan - Growth,small_cap,0.1288,0.1591,0.401,-0.2178,0.588,97,0.79,2026-11-20,2026-11-24
-119589,Sundaram Small Cap Fund - Direct Plan - GROWTH,small_cap,0.1573,0.1802,0.512,-0.2232,0.159,107,0.96,2026-11-20,2026-11-24
-119588,Sundaram Small Cap Fund - Direct Plan - GROWTH,small_cap,0.0786,0.1996,0.068,-0.2784,0.0,107,0.96,2026-11-20,2026-11-24
-145206,Tata Small Cap Fund - Direct Plan - Growth Option,small_cap,0.1352,0.1837,0.382,-0.2914,0.73,37,0.51,2026-11-20,2026-11-24
-129649,Union Small Cap Fund - Direct Plan - Growth Option,small_cap,0.1727,0.1823,0.591,-0.2338,0.156,90,1.02,2026-11-20,2026-11-24
-141925,Axis Flexi Cap Fund - Direct Plan - Growth Option,flexi_cap,0.1,0.1533,0.228,-0.1783,0.122,49,0.84,2026-11-20,2026-11-24
-118275,Canara Robeco Flexi Cap Fund - Direct Plan - GROWTH OPTION,flexi_cap,0.1165,0.1452,0.354,-0.1631,0.589,107,0.71,2026-11-20,2026-11-24
-120046,HSBC Flexi Cap Fund - Direct Plan - Growth,flexi_cap,0.1386,0.163,0.452,-0.1931,0.402,107,1.28,2026-11-20,2026-11-24
-148990,ICICI Prudential Flexi Cap fund - Direct Plan - Growth,flexi_cap,0.1654,0.145,0.692,-0.1881,1.0,5,0.86,2026-11-20,2026-11-24
-120492,JM Flexi Cap Fund - Direct Plan - Growth Option,flexi_cap,0.1682,0.1616,0.638,-0.2204,0.935,107,1.04,2026-11-20,2026-11-24
-120166,Kotak Flexi Cap Fund - Direct Plan - Growth,flexi_cap,0.1279,0.147,0.428,-0.1529,0.486,107,0.6595,2026-11-20,2026-11-24
-149104,Mahindra Manulife Flexi Cap Fund - Direct Plan - Growth,flexi_cap,0.1241,0.1449,0.408,-0.1615,0.5,4,0.96,2026-11-20,2026-11-24
-120381,ICICI Prudential Mid Cap Fund - Direct Plan - Growth,mid_cap,0.1673,0.175,0.584,-0.2001,0.318,107,1.09,2026-11-20,2026-11-24
-120403,Invesco India Mid Cap Fund - Direct Plan - Growth,mid_cap,0.2049,0.1844,0.759,-0.1797,0.86,107,0.74,2026-11-20,2026-11-24
-119775,Kotak Mid Cap Fund - Direct Plan - Growth,mid_cap,0.1617,0.167,0.579,-0.2003,1.0,107,0.5442,2026-11-20,2026-11-24
-142110,Mahindra Manulife Mid Cap Fund - Direct Plan - Growth,mid_cap,0.1781,0.1724,0.656,-0.2045,1.0,46,0.78,2026-11-20,2026-11-24
-147445,Mirae Asset Midcap Fund - Direct Plan - Growth,mid_cap,0.1529,0.1723,0.511,-0.2225,0.414,29,0.95,2026-11-20,2026-11-24
-125354,Axis Small Cap Fund - Direct Plan - Growth Option,small_cap,0.1557,0.1552,0.585,-0.1858,0.719,96,0.69,2026-11-20,2026-11-24
-146130,Canara Robeco Small Cap Fund - Direct Plan - GROWTH OPTION,small_cap,0.1405,0.1704,0.443,-0.2271,0.706,34,0.74,2026-11-20,2026-11-24
-120591,ICICI Prudential Small Cap Fund - Direct Plan - Growth,small_cap,0.1311,0.1639,0.403,-0.2181,0.234,107,1.16,2026-11-20,2026-11-24
-145137,Invesco India Small Cap Fund - Direct Plan - Growth,small_cap,0.2075,0.1836,0.776,-0.2061,1.0,37,0.62,2026-11-20,2026-11-24
-148618,UTI Small Cap Fund - Direct Plan - Growth,small_cap,0.136,0.1771,0.401,-0.1971,0.0,12,1.07,2026-11-20,2026-11-24
-120473,Axis Gold Fund - Direct Plan - Growth option,gold,0.1945,0.1676,0.773,-0.2308,0.477,107,0.31,2026-11-20,2026-11-24
-120531,Invesco India Gold ETF Fund of Fund - Direct Plan - Growth,gold,0.1941,0.1742,0.741,-0.2312,0.346,107,0.12,2026-11-20,2026-11-24
-141588,AXIS Corporate Bond Fund - Direct Plan - Growth Option,debt,0.0675,0.0148,0.17,-0.0049,0.83,53,0.39,2026-11-20,2026-11-24
-126685,Canara Robeco Corporate Bond Fund - Direct Plan - GROWTH OPTION,debt,0.0587,0.0133,-0.474,-0.0063,0.0,94,0.35,2026-11-20,2026-11-24
-118569,Franklin India Corporate Bond Fund - Direct Plan - Growth,debt,0.0672,0.0143,0.152,-0.0057,0.748,107,0.26,2026-11-20,2026-11-24
-120497,Invesco India Corporate Bond Fund - Direct Plan - Growth,debt,0.061,0.0169,-0.235,-0.0098,0.131,107,0.29,2026-11-20,2026-11-24
-133791,Kotak Corporate Bond Fund - Direct Plan - Growth Option,debt,0.0644,0.0146,-0.042,-0.004,0.61,82,0.3623,2026-11-20,2026-11-24
-148755,Mirae Asset Corporate Bond Fund - Direct Plan - Growth,debt,0.0607,0.0153,-0.278,-0.0076,0.0,9,0.28,2026-11-20,2026-11-24
-144339,UTI - Corporate Bond Fund - Direct Plan - Growth,debt,0.0629,0.0143,-0.144,-0.0052,0.525,40,0.3,2026-11-20,2026-11-24
-120546,Aditya Birla Sun Life Gold Fund - Direct Plan - GROWTH,gold,0.1972,0.1808,0.731,-0.2478,0.364,107,0.21,2026-11-20,2026-11-24
-119132,HDFC Gold ETF Fund of Fund - Direct Plan - Growth Option,gold,0.1953,0.1745,0.747,-0.2317,0.738,107,0.2,2026-11-20,2026-11-24
-120685,ICICI Prudential Gold ETF FOF - Direct Plan - Growth,gold,0.1949,0.1796,0.723,-0.2468,0.411,107,0.14,2026-11-20,2026-11-24
-119781,Kotak Gold Fund - Direct Plan - Growth,gold,0.193,0.1681,0.762,-0.2286,0.636,107,0.1505,2026-11-20,2026-11-24
-118663,Nippon India Gold Savings Fund - Direct Plan - Growth Option,gold,0.1959,0.1811,0.723,-0.2472,0.131,107,0.06,2026-11-20,2026-11-24
-115132,Quantum Gold ETF FOF - Direct Plan - Growth Option,gold,0.1958,0.1725,0.758,-0.2308,0.121,107,0.06,2026-11-20,2026-11-24
-119788,SBI GOLD FUND - Direct Plan - Growth,gold,0.196,0.1754,0.747,-0.2349,0.776,107,0.25,2026-11-20,2026-11-24
-119648,Aditya Birla Sun Life Nifty 50 Index Fund - Direct Plan - GROWTH,large_cap_index,0.0969,0.1419,0.225,-0.1468,0.0,107,0.23,2026-11-20,2026-11-24
-118482,BANDHAN Nifty 50 Index Fund - Direct Plan - Growth,large_cap_index,0.0983,0.142,0.234,-0.1471,1.0,107,0.14,2026-11-20,2026-11-24
-146376,DSP Nifty 50 Index Fund - Direct Plan - Growth,large_cap_index,0.0975,0.1419,0.229,-0.1469,0.382,34,0.24,2026-11-20,2026-11-24
-149250,Edelweiss Nifty 50 Index Fund - Direct Plan - Growth,large_cap_index,0.097,0.1419,0.225,-0.1467,0.0,2,0.14,2026-11-20,2026-11-24
-118581,Franklin India NSE Nifty 50 Index Fund - Direct Plan - Growth,large_cap_index,0.0969,0.1413,0.226,-0.1467,0.0,107,0.31,2026-11-20,2026-11-24
-119063,HDFC Nifty 50 Index Fund - Direct Plan - Growth Option,large_cap_index,0.097,0.142,0.226,-0.1474,0.916,107,0.29,2026-11-20,2026-11-24
-120620,ICICI Prudential Nifty 50 Index Fund - Direct Plan - Cumulative,large_cap_index,0.0971,0.1419,0.226,-0.1471,0.589,107,0.24,2026-11-20,2026-11-24
-148978,Kotak Nifty 50 Index Fund - Direct Plan - Growth,large_cap_index,0.097,0.1419,0.226,-0.1471,0.0,6,0.1278,2026-11-20,2026-11-24
-120307,LIC MF Nifty 50 Index Fund - Direct Plan - Growth,large_cap_index,0.0959,0.1419,0.218,-0.1482,0.0,107,0.56,2026-11-20,2026-11-24
-147794,Motilal Oswal Nifty 50 Index Fund - Direct Plan - Growth,large_cap_index,0.0979,0.1421,0.232,-0.1469,1.0,24,0.23,2026-11-20,2026-11-24
-149039,Navi Nifty 50 Index Fund - Direct Plan - Growth,large_cap_index,0.0979,0.142,0.232,-0.147,1.0,5,0.1,2026-11-20,2026-11-24
-118741,Nippon India Index Fund - Nifty 50 Plan - Direct Plan - Growth Option,large_cap_index,0.0976,0.1419,0.23,-0.1469,0.598,107,0.15,2026-11-20,2026-11-24
-119827,SBI NIFTY INDEX FUND - Direct Plan - Growth,large_cap_index,0.0972,0.1421,0.226,-0.1474,0.28,107,0.23,2026-11-20,2026-11-24
-118881,Taurus Nifty 50 Index Fund - Direct Plan - Growth,large_cap_index,0.0906,0.1403,0.183,-0.1482,0.495,107,0.86,2026-11-20,2026-11-24
-120716,UTI Nifty 50 Index Fund - Direct Plan - Growth,large_cap_index,0.0975,0.142,0.229,-0.1473,1.0,107,0.25,2026-11-20,2026-11-24
+119533,Aditya Birla Sun Life Corporate Bond Fund - Direct Plan - GROWTH,debt,0.0631,0.0173,-0.111,-0.0083,0.916,107,0.34,2026-11-23,2026-11-25
+135916,BANDHAN Corporate Bond Fund - Direct Plan - Growth,debt,0.0611,0.0145,-0.27,-0.0128,0.07,71,0.36,2026-11-23,2026-11-25
+144646,DSP Corporate Bond Fund - Direct Plan - Growth,debt,0.0611,0.016,-0.247,-0.0245,0.0,39,0.29,2026-11-23,2026-11-25
+118987,HDFC Corporate Bond Fund - Direct Plan - Growth Option,debt,0.0615,0.0186,-0.188,-0.0104,0.86,107,0.38,2026-11-23,2026-11-25
+120692,ICICI Prudential Corporate Bond Fund - Direct Plan - Growth,debt,0.0666,0.0134,0.121,-0.0049,0.664,107,0.37,2026-11-23,2026-11-25
+118814,Nippon India Corporate Bond Fund - Direct Plan - Growth Option,debt,0.0673,0.0154,0.15,-0.0047,0.318,107,0.37,2026-11-23,2026-11-25
+138330,PGIM India Corporate Bond Fund - Direct Plan - Direct Growth,debt,0.0626,0.0147,-0.161,-0.005,0.493,69,0.37,2026-11-23,2026-11-25
+146215,SBI Corporate Bond Fund - Direct Plan - Growth,debt,0.0628,0.0149,-0.146,-0.0058,0.206,34,0.37,2026-11-23,2026-11-25
+119621,Sundaram Corporate Bond Fund - Direct Plan - GROWTH,debt,0.0606,0.0136,-0.324,-0.0043,0.589,107,0.33,2026-11-23,2026-11-25
+143241,Union Corporate Bond Fund - Direct Plan - Growth Option,debt,0.0578,0.017,-0.421,-0.0104,0.0,42,0.41,2026-11-23,2026-11-25
+120564,Aditya Birla Sun Life Flexi Cap Fund - Direct Plan - GROWTH,flexi_cap,0.1325,0.1432,0.471,-0.1624,0.617,107,0.89,2026-11-23,2026-11-25
+118424,BANDHAN Flexi Cap Fund - Direct Plan - Growth,flexi_cap,0.1108,0.1391,0.329,-0.1565,0.112,107,1.5,2026-11-23,2026-11-25
+148404,BANK OF INDIA FLEXI CAP FUND - Direct Plan - Growth,flexi_cap,0.1678,0.1737,0.592,-0.2224,1.0,17,0.9,2026-11-23,2026-11-25
+119076,DSP Flexi Cap Fund - Direct Plan - Growth,flexi_cap,0.113,0.1556,0.309,-0.1706,0.729,107,0.86,2026-11-23,2026-11-25
+140353,Edelweiss Flexi Cap Fund - Direct Plan - Growth,flexi_cap,0.1424,0.1505,0.514,-0.179,0.902,61,0.76,2026-11-23,2026-11-25
+118535,Franklin India Flexi Cap Fund - Direct Plan - Growth,flexi_cap,0.1273,0.1415,0.44,-0.1527,0.598,107,0.98,2026-11-23,2026-11-25
+118955,HDFC Flexi Cap Fund - Direct Plan - Growth Option,flexi_cap,0.186,0.1344,0.9,-0.1237,0.551,107,0.74,2026-11-23,2026-11-25
+120264,LIC MF Flexi Cap Fund - Direct Plan - Growth,flexi_cap,0.1115,0.1559,0.299,-0.2199,0.0,107,1.78,2026-11-23,2026-11-25
+129046,Motilal Oswal Flexi Cap Fund - Direct Plan - Growth,flexi_cap,0.1476,0.1618,0.51,-0.192,0.217,92,1.14,2026-11-23,2026-11-25
+143793,Navi Flexi Cap Fund - Direct Plan - Growth,flexi_cap,0.1218,0.1493,0.38,-0.1866,0.366,41,0.69,2026-11-23,2026-11-25
+149094,Nippon India Flexi Cap Fund - Direct Plan - Growth Option,flexi_cap,0.1168,0.1522,0.34,-0.1868,0.25,4,0.65,2026-11-23,2026-11-25
+133839,PGIM India Flexi Cap Fund - Direct Plan - Direct Growth,flexi_cap,0.0972,0.1452,0.222,-0.1597,0.815,81,0.81,2026-11-23,2026-11-25
+122639,Parag Parikh Flexi Cap Fund - Direct Plan - Growth,flexi_cap,0.1229,0.1085,0.533,-0.1401,0.932,103,0.68,2026-11-23,2026-11-25
+120843,Quant Flexi Cap Fund - Direct Plan - Growth Option,flexi_cap,0.1517,0.1793,0.484,-0.2397,0.888,107,1.12,2026-11-23,2026-11-25
+119718,SBI FLEXICAP FUND - Direct Plan - Growth,flexi_cap,0.0935,0.1316,0.216,-0.1506,0.299,107,1.25,2026-11-23,2026-11-25
+144905,Shriram Flexi Cap Fund - Direct Plan - Growth,flexi_cap,0.0909,0.1561,0.166,-0.2267,0.0,38,1.07,2026-11-23,2026-11-25
+144546,Tata Flexi Cap Fund - Direct Plan - Growth Option,flexi_cap,0.0994,0.1338,0.257,-0.1347,0.0,39,0.88,2026-11-23,2026-11-25
+118883,Taurus Flexi Cap Fund - Direct Plan - Growth,flexi_cap,0.1215,0.163,0.346,-0.1996,0.0,107,2.66,2026-11-23,2026-11-25
+119292,Union Flexi Cap Fund - Direct Plan - Growth Option,flexi_cap,0.1152,0.1438,0.349,-0.1643,0.542,107,1.44,2026-11-23,2026-11-25
+120662,UTI - Flexi Cap Fund. - Direct Plan - Growth,flexi_cap,0.0573,0.1502,-0.051,-0.202,0.336,107,1.17,2026-11-23,2026-11-25
+119620,Aditya Birla Sun Life Midcap Fund - Direct Plan - GROWTH,mid_cap,0.1347,0.1684,0.414,-0.2166,0.0,107,1.2,2026-11-23,2026-11-25
+120505,Axis Midcap Fund - Direct Plan - Growth Option,mid_cap,0.1346,0.1548,0.45,-0.1886,0.523,107,0.77,2026-11-23,2026-11-25
+119071,DSP Midcap Fund - Direct Plan - Growth,mid_cap,0.1218,0.1695,0.335,-0.2093,0.355,107,0.83,2026-11-23,2026-11-25
+140228,Edelweiss Mid Cap Fund - Direct Plan - Growth,mid_cap,0.1837,0.1681,0.706,-0.1805,0.984,61,0.7,2026-11-23,2026-11-25
+118533,Franklin India Mid Cap Fund - Direct Plan - Growth,mid_cap,0.1392,0.1652,0.449,-0.1777,0.262,107,1.14,2026-11-23,2026-11-25
+118989,HDFC Mid Cap Fund - Direct Plan - Growth Option,mid_cap,0.1926,0.1542,0.828,-0.1621,0.729,107,0.73,2026-11-23,2026-11-25
+148733,ITI Mid Cap Fund - Direct Plan - Growth Option,mid_cap,0.1661,0.1735,0.583,-0.2205,0.556,9,0.88,2026-11-23,2026-11-25
+118668,Nippon India Growth Mid Cap Fund - Direct Plan - Growth Option,mid_cap,0.1816,0.1656,0.704,-0.1927,0.701,107,0.77,2026-11-23,2026-11-25
+125307,PGIM India Midcap Fund - Direct Plan - Direct Growth,mid_cap,0.1102,0.157,0.288,-0.1814,0.594,96,0.81,2026-11-23,2026-11-25
+120841,Quant Mid Cap Fund - Direct Plan - Growth Option,mid_cap,0.1473,0.1764,0.466,-0.245,0.617,107,1.17,2026-11-23,2026-11-25
+119716,SBI MIDCAP FUND - Direct Plan - Growth,mid_cap,0.1185,0.151,0.354,-0.1722,0.299,107,1.01,2026-11-23,2026-11-25
+119581,Sundaram Mid Cap Fund - Direct Plan - GROWTH,mid_cap,0.1707,0.1653,0.639,-0.2009,0.29,107,1.05,2026-11-23,2026-11-25
+119178,Tata Mid Cap Fund - Direct Plan - Growth Option,mid_cap,0.1528,0.1592,0.551,-0.2063,0.458,107,0.81,2026-11-23,2026-11-25
+118872,Taurus Mid Cap Fund - Direct Plan - Growth,mid_cap,0.1313,0.1785,0.372,-0.239,0.234,107,2.35,2026-11-23,2026-11-25
+148073,Union Midcap Fund - Direct Plan - Growth Option,mid_cap,0.1526,0.1664,0.526,-0.2005,0.476,21,1.04,2026-11-23,2026-11-25
+120726,UTI - Mid Cap Fund - Direct Plan - Growth,mid_cap,0.1189,0.1651,0.326,-0.2235,0.103,107,1.27,2026-11-23,2026-11-25
+119556,Aditya Birla Sun Life Small Cap Fund - Direct Plan - GROWTH,small_cap,0.1426,0.1851,0.419,-0.2495,0.037,107,1.06,2026-11-23,2026-11-25
+147946,BANDHAN Small Cap Fund - Direct Plan - Growth,small_cap,0.2022,0.1888,0.727,-0.2126,1.0,22,0.63,2026-11-23,2026-11-25
+145678,BANK OF INDIA SMALL CAP FUND - Direct Plan - Growth,small_cap,0.1901,0.197,0.635,-0.2448,1.0,36,0.82,2026-11-23,2026-11-25
+119212,DSP Small Cap Fund - Direct Plan - Growth,small_cap,0.1643,0.1939,0.512,-0.2163,0.486,107,0.84,2026-11-23,2026-11-25
+146196,Edelweiss Small Cap Fund - Direct Plan - Growth,small_cap,0.1607,0.1731,0.553,-0.209,0.971,34,0.63,2026-11-23,2026-11-25
+118525,Franklin India Small Cap Fund - Direct Plan - Growth,small_cap,0.1468,0.1821,0.449,-0.2283,0.299,107,1.06,2026-11-23,2026-11-25
+130503,HDFC Small Cap Fund - Direct Plan - Growth Option,small_cap,0.1426,0.1679,0.462,-0.1953,0.567,90,0.79,2026-11-23,2026-11-25
+147919,ITI Small Cap Fund - Direct Plan - Growth Option,small_cap,0.1958,0.1817,0.72,-0.2093,0.227,22,0.84,2026-11-23,2026-11-25
+120164,Kotak Small Cap Fund - Direct Plan - Growth,small_cap,0.1161,0.1749,0.292,-0.2391,0.636,107,0.6319,2026-11-23,2026-11-25
+118778,Nippon India Small Cap Fund - Direct Plan - Growth Option,small_cap,0.1779,0.1794,0.629,-0.2318,1.0,107,0.69,2026-11-23,2026-11-25
+149019,PGIM India Small Cap Fund - Direct Plan - Direct Growth,small_cap,0.1292,0.1739,0.369,-0.1973,0.0,4,0.92,2026-11-23,2026-11-25
+120828,Quant Small Cap Fund - Direct Plan - Growth Option,small_cap,0.1844,0.1896,0.63,-0.2357,0.636,107,0.95,2026-11-23,2026-11-25
+125497,SBI SMALL CAP FUND - Direct Plan - Growth,small_cap,0.1276,0.1588,0.394,-0.2178,0.588,97,0.79,2026-11-23,2026-11-25
+119589,Sundaram Small Cap Fund - Direct Plan - GROWTH,small_cap,0.1562,0.18,0.507,-0.2232,0.159,107,0.96,2026-11-23,2026-11-25
+119588,Sundaram Small Cap Fund - Direct Plan - GROWTH,small_cap,0.0776,0.1994,0.063,-0.2784,0.0,107,0.96,2026-11-23,2026-11-25
+145206,Tata Small Cap Fund - Direct Plan - Growth Option,small_cap,0.1334,0.1832,0.374,-0.2914,0.73,37,0.51,2026-11-23,2026-11-25
+129649,Union Small Cap Fund - Direct Plan - Growth Option,small_cap,0.1721,0.1821,0.588,-0.2338,0.156,90,1.02,2026-11-23,2026-11-25
+141925,Axis Flexi Cap Fund - Direct Plan - Growth Option,flexi_cap,0.0971,0.152,0.211,-0.1783,0.122,49,0.84,2026-11-23,2026-11-25
+118275,Canara Robeco Flexi Cap Fund - Direct Plan - GROWTH OPTION,flexi_cap,0.1133,0.1431,0.338,-0.1631,0.589,107,0.71,2026-11-23,2026-11-25
+120046,HSBC Flexi Cap Fund - Direct Plan - Growth,flexi_cap,0.136,0.1619,0.439,-0.1931,0.402,107,1.28,2026-11-23,2026-11-25
+148990,ICICI Prudential Flexi Cap fund - Direct Plan - Growth,flexi_cap,0.1626,0.1437,0.679,-0.1881,1.0,5,0.86,2026-11-23,2026-11-25
+120492,JM Flexi Cap Fund - Direct Plan - Growth Option,flexi_cap,0.1657,0.1603,0.628,-0.2204,0.935,107,1.04,2026-11-23,2026-11-25
+120166,Kotak Flexi Cap Fund - Direct Plan - Growth,flexi_cap,0.1242,0.1448,0.409,-0.1529,0.486,107,0.6595,2026-11-23,2026-11-25
+149104,Mahindra Manulife Flexi Cap Fund - Direct Plan - Growth,flexi_cap,0.1221,0.1439,0.397,-0.1615,0.75,4,0.96,2026-11-23,2026-11-25
+120381,ICICI Prudential Mid Cap Fund - Direct Plan - Growth,mid_cap,0.164,0.1743,0.568,-0.2001,0.318,107,1.09,2026-11-23,2026-11-25
+120403,Invesco India Mid Cap Fund - Direct Plan - Growth,mid_cap,0.2038,0.1838,0.755,-0.1797,0.86,107,0.74,2026-11-23,2026-11-25
+119775,Kotak Mid Cap Fund - Direct Plan - Growth,mid_cap,0.1598,0.1664,0.57,-0.2003,1.0,107,0.5442,2026-11-23,2026-11-25
+142110,Mahindra Manulife Mid Cap Fund - Direct Plan - Growth,mid_cap,0.176,0.1716,0.647,-0.2045,1.0,46,0.78,2026-11-23,2026-11-25
+147445,Mirae Asset Midcap Fund - Direct Plan - Growth,mid_cap,0.1514,0.1718,0.503,-0.2225,0.414,29,0.95,2026-11-23,2026-11-25
+125354,Axis Small Cap Fund - Direct Plan - Growth Option,small_cap,0.1544,0.1548,0.578,-0.1858,0.719,96,0.69,2026-11-23,2026-11-25
+146130,Canara Robeco Small Cap Fund - Direct Plan - GROWTH OPTION,small_cap,0.1396,0.1701,0.438,-0.2271,0.706,34,0.74,2026-11-23,2026-11-25
+120591,ICICI Prudential Small Cap Fund - Direct Plan - Growth,small_cap,0.1287,0.1633,0.39,-0.2181,0.234,107,1.16,2026-11-23,2026-11-25
+145137,Invesco India Small Cap Fund - Direct Plan - Growth,small_cap,0.2068,0.1833,0.774,-0.2061,1.0,37,0.62,2026-11-23,2026-11-25
+148618,UTI Small Cap Fund - Direct Plan - Growth,small_cap,0.1356,0.177,0.399,-0.1971,0.0,12,1.07,2026-11-23,2026-11-25
+120473,Axis Gold Fund - Direct Plan - Growth option,gold,0.1978,0.1656,0.802,-0.2199,0.477,107,0.31,2026-11-23,2026-11-25
+120531,Invesco India Gold ETF Fund of Fund - Direct Plan - Growth,gold,0.1983,0.1718,0.776,-0.2175,0.346,107,0.12,2026-11-23,2026-11-25
+141588,AXIS Corporate Bond Fund - Direct Plan - Growth Option,debt,0.0676,0.0148,0.173,-0.0049,0.83,53,0.39,2026-11-23,2026-11-25
+126685,Canara Robeco Corporate Bond Fund - Direct Plan - GROWTH OPTION,debt,0.0587,0.0133,-0.47,-0.0063,0.0,94,0.35,2026-11-23,2026-11-25
+118569,Franklin India Corporate Bond Fund - Direct Plan - Growth,debt,0.0673,0.0143,0.159,-0.0057,0.748,107,0.26,2026-11-23,2026-11-25
+120497,Invesco India Corporate Bond Fund - Direct Plan - Growth,debt,0.0611,0.0169,-0.232,-0.0098,0.131,107,0.29,2026-11-23,2026-11-25
+133791,Kotak Corporate Bond Fund - Direct Plan - Growth Option,debt,0.0644,0.0146,-0.039,-0.004,0.61,82,0.3623,2026-11-23,2026-11-25
+148755,Mirae Asset Corporate Bond Fund - Direct Plan - Growth,debt,0.0608,0.0153,-0.275,-0.0076,0.0,9,0.28,2026-11-23,2026-11-25
+144339,UTI - Corporate Bond Fund - Direct Plan - Growth,debt,0.063,0.0143,-0.14,-0.0052,0.525,40,0.3,2026-11-23,2026-11-25
+120546,Aditya Birla Sun Life Gold Fund - Direct Plan - GROWTH,gold,0.1988,0.1799,0.744,-0.2426,0.364,107,0.21,2026-11-23,2026-11-25
+119132,HDFC Gold ETF Fund of Fund - Direct Plan - Growth Option,gold,0.1983,0.1728,0.771,-0.222,0.738,107,0.2,2026-11-23,2026-11-25
+120685,ICICI Prudential Gold ETF FOF - Direct Plan - Growth,gold,0.1985,0.1777,0.751,-0.2354,0.421,107,0.14,2026-11-23,2026-11-25
+119781,Kotak Gold Fund - Direct Plan - Growth,gold,0.1966,0.166,0.793,-0.2169,0.636,107,0.1505,2026-11-23,2026-11-25
+118663,Nippon India Gold Savings Fund - Direct Plan - Growth Option,gold,0.1978,0.1801,0.738,-0.2411,0.121,107,0.06,2026-11-23,2026-11-25
+115132,Quantum Gold ETF FOF - Direct Plan - Growth Option,gold,0.1994,0.1704,0.789,-0.2191,0.121,107,0.06,2026-11-23,2026-11-25
+119788,SBI GOLD FUND - Direct Plan - Growth,gold,0.1996,0.1734,0.776,-0.2235,0.776,107,0.25,2026-11-23,2026-11-25
+119648,Aditya Birla Sun Life Nifty 50 Index Fund - Direct Plan - GROWTH,large_cap_index,0.0931,0.139,0.202,-0.1468,0.0,107,0.23,2026-11-23,2026-11-25
+118482,BANDHAN Nifty 50 Index Fund - Direct Plan - Growth,large_cap_index,0.0944,0.1391,0.211,-0.1471,1.0,107,0.14,2026-11-23,2026-11-25
+146376,DSP Nifty 50 Index Fund - Direct Plan - Growth,large_cap_index,0.0937,0.1391,0.206,-0.1469,0.382,34,0.24,2026-11-23,2026-11-25
+149250,Edelweiss Nifty 50 Index Fund - Direct Plan - Growth,large_cap_index,0.0931,0.139,0.202,-0.1467,0.0,2,0.14,2026-11-23,2026-11-25
+118581,Franklin India NSE Nifty 50 Index Fund - Direct Plan - Growth,large_cap_index,0.0931,0.1384,0.203,-0.1467,0.0,107,0.31,2026-11-23,2026-11-25
+119063,HDFC Nifty 50 Index Fund - Direct Plan - Growth Option,large_cap_index,0.0932,0.1391,0.202,-0.1474,0.916,107,0.29,2026-11-23,2026-11-25
+120620,ICICI Prudential Nifty 50 Index Fund - Direct Plan - Cumulative,large_cap_index,0.0933,0.139,0.203,-0.1471,0.589,107,0.24,2026-11-23,2026-11-25
+148978,Kotak Nifty 50 Index Fund - Direct Plan - Growth,large_cap_index,0.0932,0.139,0.203,-0.1471,0.0,6,0.1278,2026-11-23,2026-11-25
+120307,LIC MF Nifty 50 Index Fund - Direct Plan - Growth,large_cap_index,0.092,0.139,0.194,-0.1482,0.0,107,0.56,2026-11-23,2026-11-25
+147794,Motilal Oswal Nifty 50 Index Fund - Direct Plan - Growth,large_cap_index,0.0941,0.1392,0.209,-0.1469,1.0,24,0.23,2026-11-23,2026-11-25
+149039,Navi Nifty 50 Index Fund - Direct Plan - Growth,large_cap_index,0.0941,0.1391,0.209,-0.147,1.0,5,0.1,2026-11-23,2026-11-25
+118741,Nippon India Index Fund - Nifty 50 Plan - Direct Plan - Growth Option,large_cap_index,0.0938,0.139,0.207,-0.1469,0.598,107,0.15,2026-11-23,2026-11-25
+119827,SBI NIFTY INDEX FUND - Direct Plan - Growth,large_cap_index,0.0933,0.1392,0.203,-0.1474,0.28,107,0.23,2026-11-23,2026-11-25
+118881,Taurus Nifty 50 Index Fund - Direct Plan - Growth,large_cap_index,0.0868,0.1374,0.159,-0.1482,0.495,107,0.86,2026-11-23,2026-11-25
+120716,UTI Nifty 50 Index Fund - Direct Plan - Growth,large_cap_index,0.0936,0.1392,0.206,-0.1473,1.0,107,0.25,2026-11-23,2026-11-25
