@@ -10,17 +10,19 @@ from planner.allocation import (
     DEFAULT_RETURN_ASSUMPTIONS,
     Allocation,
     EmergencyFundStatus,
+    InvestmentType,
     ReturnAssumptions,
     RiskLevel,
     ability_level,
     emergency_fund_check,
     expected_return,
     goal_allocation,
+    grow_existing_investments,
     risk_bucket,
     willingness_from_quiz,
 )
-from planner.inputs import BigGoal, PlanInput
-from planner.sip import future_cost, retirement_corpus
+from planner.inputs import BigGoal, ExistingSavings, PlanInput
+from planner.sip import future_cost, future_value_lumpsum, retirement_corpus
 
 # Planning assumptions (not asked in the form; the dashboard can change them later).
 INFLATION = 0.06  # yearly rise in prices
@@ -112,3 +114,48 @@ def goal_mix(
     return GoalMix(
         allocation=allocation, expected_return=expected_return(allocation, assumptions)
     )
+
+
+def split_savings(
+    savings: ExistingSavings,
+    *,
+    big_goal: GoalTarget | None,
+    retirement: GoalTarget,
+    retirement_return: float,
+) -> tuple[float, float]:
+    """Existing savings each goal can count on, valued on that goal's own date.
+
+    Returns (big goal's share, retirement's share). Savings stay where they are
+    and grow at their own rates: EPF and PPF go to retirement (locked until
+    then anyway); mutual funds and FDs go to the big goal. If they grow to more
+    than the big goal costs, the extra keeps growing at retirement's expected
+    return and joins retirement. With no big goal, everything goes to retirement.
+    """
+    locked = {InvestmentType.EPF: savings.epf, InvestmentType.PPF: savings.ppf}
+    liquid = {
+        InvestmentType.MUTUAL_FUNDS: savings.mutual_funds,
+        InvestmentType.FD: savings.fixed_deposits,
+    }
+    for_retirement = grow_existing_investments(locked, retirement.years_away)
+
+    if big_goal is None:
+        return 0.0, for_retirement + grow_existing_investments(liquid, retirement.years_away)
+
+    liquid_at_goal = grow_existing_investments(liquid, big_goal.years_away)
+    for_big_goal = min(liquid_at_goal, big_goal.target_amount)
+    extra = liquid_at_goal - for_big_goal  # 0 unless savings exceed the goal
+
+    years_between = retirement.years_away - big_goal.years_away
+    if years_between >= 0:  # big goal comes first: the extra can still grow into retirement
+        for_retirement += future_value_lumpsum(extra, retirement_return, years_between)
+    return for_big_goal, for_retirement
+
+
+def split_lumpsum(lumpsum: float, big_goal_need_today: float) -> tuple[float, float]:
+    """Share out a new lumpsum: the big goal first, the rest to retirement.
+
+    `big_goal_need_today` is what the big goal still lacks, as a lumpsum today.
+    Returns (to big goal, to retirement), both in today's rupees.
+    """
+    to_big_goal = min(lumpsum, big_goal_need_today)
+    return to_big_goal, lumpsum - to_big_goal

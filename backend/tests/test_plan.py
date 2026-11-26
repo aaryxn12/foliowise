@@ -1,8 +1,16 @@
 import pytest
 
 from planner.allocation import RiskLevel
-from planner.inputs import BigGoal
-from planner.plan import big_goal_target, goal_mix, retirement_target, risk_profile
+from planner.inputs import BigGoal, ExistingSavings
+from planner.plan import (
+    GoalTarget,
+    big_goal_target,
+    goal_mix,
+    retirement_target,
+    risk_profile,
+    split_lumpsum,
+    split_savings,
+)
 from tests.sample_forms import priya
 
 # --- Piece 1: risk profile --------------------------------------------------------
@@ -98,3 +106,69 @@ def test_goal_two_years_away_is_nearly_all_debt():
     mix = goal_mix(RiskLevel.MODERATE, 2)
     assert mix.allocation.gold == 0
     assert mix.expected_return == pytest.approx(0.0725)
+
+
+# --- Piece 3b: savings and lumpsum to goals -------------------------------------------
+
+HOUSE = GoalTarget(name="house", years_away=7, target_amount=30_00_000)
+RETIREMENT = GoalTarget(name="retirement", years_away=20, target_amount=5_00_00_000)
+PRIYA_SAVINGS = ExistingSavings(
+    mutual_funds=2_00_000, fixed_deposits=1_00_000, ppf=1_50_000, epf=3_00_000
+)
+
+
+def test_priya_savings_split_by_type():
+    """MF + FD grow for 7 years towards the house; EPF + PPF for 20 years towards
+    retirement, each at its own rate."""
+    for_house, for_retirement = split_savings(
+        PRIYA_SAVINGS, big_goal=HOUSE, retirement=RETIREMENT, retirement_return=0.1055
+    )
+    assert for_house == pytest.approx(2_00_000 * 1.12**7 + 1_00_000 * 1.07**7)
+    assert for_retirement == pytest.approx(3_00_000 * 1.0825**20 + 1_50_000 * 1.071**20)
+
+
+def test_savings_beyond_the_big_goal_spill_into_retirement():
+    """Rs50L of mutual funds grows past the Rs30L house; the extra keeps growing at
+    retirement's 10.55% for the 13 years between the two goals."""
+    rich = ExistingSavings(mutual_funds=50_00_000)
+    for_house, for_retirement = split_savings(
+        rich, big_goal=HOUSE, retirement=RETIREMENT, retirement_return=0.1055
+    )
+    extra_at_house = 50_00_000 * 1.12**7 - 30_00_000
+    assert for_house == pytest.approx(30_00_000)
+    assert for_retirement == pytest.approx(extra_at_house * 1.1055**13)
+
+
+def test_with_no_big_goal_all_savings_go_to_retirement():
+    for_house, for_retirement = split_savings(
+        PRIYA_SAVINGS, big_goal=None, retirement=RETIREMENT, retirement_return=0.1055
+    )
+    assert for_house == 0
+    assert for_retirement == pytest.approx(
+        2_00_000 * 1.12**20 + 1_00_000 * 1.07**20 + 3_00_000 * 1.0825**20 + 1_50_000 * 1.071**20
+    )
+
+
+def test_extra_from_a_goal_after_retirement_is_not_counted_for_retirement():
+    """A goal 25 years away arrives after retiring in 20: its extra can't help."""
+    late_goal = GoalTarget(name="other", years_away=25, target_amount=1_00_000)
+    _, for_retirement = split_savings(
+        ExistingSavings(mutual_funds=5_00_000),
+        big_goal=late_goal,
+        retirement=RETIREMENT,
+        retirement_return=0.1055,
+    )
+    assert for_retirement == 0
+
+
+@pytest.mark.parametrize(
+    "lumpsum, need, expected",
+    [
+        (2_00_000, 12_70_000, (2_00_000, 0)),  # Priya: all of it to the house
+        (20_00_000, 12_70_000, (12_70_000, 7_30_000)),  # house filled, rest to retirement
+        (5_00_000, 0, (0, 5_00_000)),  # house already covered
+        (0, 12_70_000, (0, 0)),  # no lumpsum at all
+    ],
+)
+def test_split_lumpsum_fills_the_big_goal_first(lumpsum, need, expected):
+    assert split_lumpsum(lumpsum, need) == pytest.approx(expected)

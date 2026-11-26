@@ -63,8 +63,9 @@ Turn the CFA policy tables into config plus code that applies them.
 - [x] Input model `planner/inputs.py` (Pydantic, frozen, extra=forbid): field ranges plus cross-field rules (retirement after age, outgoings < take-home, SIP budget fits, mode needs its amounts)
 - [ ] Orchestrate in `planner/plan.py`: form → goals → corpus → allocation → SIP per goal → affordability → funds → plan JSON
   - [x] Piece 1: risk profile (willingness, ability, bucket, emergency fund)
-  - [ ] Piece 2: money each goal needs (house future cost, retirement corpus)
-  - [ ] Piece 3: allocation and expected return per goal; savings by type (EPF/PPF to retirement, MF/FD to big goal, excess to retirement); lumpsum to nearer goal first
+  - [x] Piece 2: money each goal needs (`big_goal_target`, `retirement_target`; inflation 6%, life to 85, 8% after retiring)
+  - [x] Piece 3a: mix and expected return per goal (`goal_mix`)
+  - [ ] Piece 3b: savings by type (EPF/PPF to retirement, MF/FD to big goal, excess to retirement); lumpsum to nearer goal first
   - [ ] Piece 4: SIP per goal and affordability
   - [ ] Piece 5: rupee split per category, top fund in each, crash test; `build_plan` ties it together
 - [ ] Shortfall levers: retire later, smaller goal, step-up SIP, use lumpsum
