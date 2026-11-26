@@ -1,11 +1,17 @@
 import pytest
 
-from planner.allocation import Allocation, RiskLevel
+import pandas as pd
+
+from planner.allocation import Allocation, RiskLevel, equity_split
 from planner.inputs import BigGoal, ExistingSavings
 from planner.plan import (
+    FundPick,
     GoalMix,
     GoalTarget,
     big_goal_target,
+    category_shares,
+    fund_amounts,
+    fund_picks,
     goal_funding,
     goal_mix,
     plan_affordability,
@@ -149,7 +155,10 @@ def test_with_no_big_goal_all_savings_go_to_retirement():
     )
     assert for_house == 0
     assert for_retirement == pytest.approx(
-        2_00_000 * 1.12**20 + 1_00_000 * 1.07**20 + 3_00_000 * 1.0825**20 + 1_50_000 * 1.071**20
+        2_00_000 * 1.12**20
+        + 1_00_000 * 1.07**20
+        + 3_00_000 * 1.0825**20
+        + 1_50_000 * 1.071**20
     )
 
 
@@ -169,7 +178,11 @@ def test_extra_from_a_goal_after_retirement_is_not_counted_for_retirement():
     "lumpsum, need, expected",
     [
         (2_00_000, 12_70_000, (2_00_000, 0)),  # Priya: all of it to the house
-        (20_00_000, 12_70_000, (12_70_000, 7_30_000)),  # house filled, rest to retirement
+        (
+            20_00_000,
+            12_70_000,
+            (12_70_000, 7_30_000),
+        ),  # house filled, rest to retirement
         (5_00_000, 0, (0, 5_00_000)),  # house already covered
         (0, 12_70_000, (0, 0)),  # no lumpsum at all
     ],
@@ -180,14 +193,18 @@ def test_split_lumpsum_fills_the_big_goal_first(lumpsum, need, expected):
 
 # --- Piece 4: SIP per goal and affordability ------------------------------------------
 
-HOUSE_MIX = GoalMix(allocation=Allocation(equity=0.50, debt=0.45, gold=0.05), expected_return=0.0955)
+HOUSE_MIX = GoalMix(
+    allocation=Allocation(equity=0.50, debt=0.45, gold=0.05), expected_return=0.0955
+)
 
 
 def test_savings_and_lumpsum_both_reduce_the_sip():
     """Priya's house: Rs30L target, Rs6L from savings, Rs2L lumpsum."""
     nothing = goal_funding(HOUSE, HOUSE_MIX, savings_at_goal=0, lumpsum_today=0)
     savings = goal_funding(HOUSE, HOUSE_MIX, savings_at_goal=6_00_000, lumpsum_today=0)
-    both = goal_funding(HOUSE, HOUSE_MIX, savings_at_goal=6_00_000, lumpsum_today=2_00_000)
+    both = goal_funding(
+        HOUSE, HOUSE_MIX, savings_at_goal=6_00_000, lumpsum_today=2_00_000
+    )
     assert nothing.monthly_sip > savings.monthly_sip > both.monthly_sip > 0
     assert savings.monthly_sip == pytest.approx(
         sip_needed(24_00_000, 0.0955, 7).monthly_sip
@@ -212,3 +229,87 @@ def test_affordability_adds_up_every_goal():
     assert result.sip_needed == pytest.approx(79_059)
     assert result.shortfall == pytest.approx(39_059)
     assert not result.is_affordable
+
+
+# --- Piece 5a: from a goal's SIP to actual funds --------------------------------------
+
+CATEGORIES = ["large_cap_index", "flexi_cap", "mid_cap", "small_cap", "debt", "gold"]
+
+
+def test_priya_retirement_category_shares():
+    """70% equity split 40/30/20/10 -> 28/21/14/7; debt 25; gold 5."""
+    shares = category_shares(
+        Allocation(equity=0.70, debt=0.25, gold=0.05), equity_split(RiskLevel.MODERATE)
+    )
+    assert shares == pytest.approx(
+        {
+            "large_cap_index": 0.28,
+            "flexi_cap": 0.21,
+            "mid_cap": 0.14,
+            "small_cap": 0.07,
+            "debt": 0.25,
+            "gold": 0.05,
+        }
+    )
+    assert sum(shares.values()) == pytest.approx(1.0)
+
+
+def test_conservative_goal_has_no_small_caps():
+    shares = category_shares(
+        Allocation(equity=0.50, debt=0.45, gold=0.05),
+        equity_split(RiskLevel.CONSERVATIVE),
+    )
+    assert shares["small_cap"] == 0
+    assert shares["large_cap_index"] == pytest.approx(0.30)
+
+
+def tiny_metrics():
+    """Two made-up funds per category; the first is better on every metric."""
+    rows = []
+    for number, category in enumerate(CATEGORIES):
+        for better in (True, False):
+            rows.append(
+                {
+                    "scheme_code": number * 10 + (1 if better else 2),
+                    "scheme_name": f"{category} {'good' if better else 'ok'}",
+                    "category": category,
+                    "consistency": 0.8 if better else 0.4,
+                    "windows_compared": 100,
+                    "sharpe_5y": 0.8 if better else 0.4,
+                    "max_drawdown_5y": -0.1 if better else -0.3,
+                    "expense_ratio": 0.5 if better else 1.0,
+                }
+            )
+    return pd.DataFrame(rows)
+
+
+def test_fund_picks_lists_each_category_best_first():
+    picks = fund_picks(tiny_metrics())
+    assert set(picks) == set(CATEGORIES)
+    assert [pick.scheme_name for pick in picks["mid_cap"]] == [
+        "mid_cap good",
+        "mid_cap ok",
+    ]
+    assert isinstance(picks["mid_cap"][0], FundPick)
+
+
+def test_fund_amounts_puts_rupees_in_the_top_fund_of_each_category():
+    """Rs25,000 with Priya's retirement shares, as in the rupee split tests."""
+    shares = {
+        "large_cap_index": 0.28,
+        "flexi_cap": 0.21,
+        "mid_cap": 0.14,
+        "small_cap": 0.07,
+        "debt": 0.25,
+        "gold": 0.05,
+    }
+    amounts = fund_amounts(25_000, shares, fund_picks(tiny_metrics()))
+    by_category = {item.category: item for item in amounts}
+    assert by_category["debt"].amount == 6_500
+    assert by_category["debt"].fund.scheme_name == "debt good"
+    assert [alt.scheme_name for alt in by_category["debt"].alternatives] == ["debt ok"]
+    assert sum(item.amount for item in amounts) == 25_000
+
+
+def test_nothing_to_invest_means_no_funds():
+    assert fund_amounts(0, {"debt": 1.0}, fund_picks(tiny_metrics())) == []
