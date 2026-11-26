@@ -1,16 +1,20 @@
 import pytest
 
-from planner.allocation import RiskLevel
+from planner.allocation import Allocation, RiskLevel
 from planner.inputs import BigGoal, ExistingSavings
 from planner.plan import (
+    GoalMix,
     GoalTarget,
     big_goal_target,
+    goal_funding,
     goal_mix,
+    plan_affordability,
     retirement_target,
     risk_profile,
     split_lumpsum,
     split_savings,
 )
+from planner.sip import GoalFunding, sip_needed
 from tests.sample_forms import priya
 
 # --- Piece 1: risk profile --------------------------------------------------------
@@ -172,3 +176,39 @@ def test_extra_from_a_goal_after_retirement_is_not_counted_for_retirement():
 )
 def test_split_lumpsum_fills_the_big_goal_first(lumpsum, need, expected):
     assert split_lumpsum(lumpsum, need) == pytest.approx(expected)
+
+
+# --- Piece 4: SIP per goal and affordability ------------------------------------------
+
+HOUSE_MIX = GoalMix(allocation=Allocation(equity=0.50, debt=0.45, gold=0.05), expected_return=0.0955)
+
+
+def test_savings_and_lumpsum_both_reduce_the_sip():
+    """Priya's house: Rs30L target, Rs6L from savings, Rs2L lumpsum."""
+    nothing = goal_funding(HOUSE, HOUSE_MIX, savings_at_goal=0, lumpsum_today=0)
+    savings = goal_funding(HOUSE, HOUSE_MIX, savings_at_goal=6_00_000, lumpsum_today=0)
+    both = goal_funding(HOUSE, HOUSE_MIX, savings_at_goal=6_00_000, lumpsum_today=2_00_000)
+    assert nothing.monthly_sip > savings.monthly_sip > both.monthly_sip > 0
+    assert savings.monthly_sip == pytest.approx(
+        sip_needed(24_00_000, 0.0955, 7).monthly_sip
+    )
+
+
+def test_savings_bigger_than_the_goal_need_no_sip():
+    """Rs40L of savings for a Rs30L house: nothing more to invest, not a negative SIP."""
+    funding = goal_funding(HOUSE, HOUSE_MIX, savings_at_goal=40_00_000, lumpsum_today=0)
+    assert funding.monthly_sip == 0
+    assert funding.lumpsum_needed_today == 0
+
+
+def test_affordability_adds_up_every_goal():
+    """Priya: about Rs17,166 for the house + Rs61,893 for retirement = Rs79,059,
+    against a Rs40,000 budget."""
+    fundings = [
+        GoalFunding(monthly_sip=17_166, lumpsum_needed_today=0, surplus_today=0),
+        GoalFunding(monthly_sip=61_893, lumpsum_needed_today=0, surplus_today=0),
+    ]
+    result = plan_affordability(fundings, monthly_budget=40_000)
+    assert result.sip_needed == pytest.approx(79_059)
+    assert result.shortfall == pytest.approx(39_059)
+    assert not result.is_affordable

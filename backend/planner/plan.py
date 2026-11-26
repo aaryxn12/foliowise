@@ -22,7 +22,15 @@ from planner.allocation import (
     willingness_from_quiz,
 )
 from planner.inputs import BigGoal, ExistingSavings, PlanInput
-from planner.sip import future_cost, future_value_lumpsum, retirement_corpus
+from planner.sip import (
+    Affordability,
+    GoalFunding,
+    check_affordability,
+    future_cost,
+    future_value_lumpsum,
+    retirement_corpus,
+    sip_needed,
+)
 
 # Planning assumptions (not asked in the form; the dashboard can change them later).
 INFLATION = 0.06  # yearly rise in prices
@@ -159,3 +167,21 @@ def split_lumpsum(lumpsum: float, big_goal_need_today: float) -> tuple[float, fl
     """
     to_big_goal = min(lumpsum, big_goal_need_today)
     return to_big_goal, lumpsum - to_big_goal
+
+
+def goal_funding(
+    target: GoalTarget, mix: GoalMix, *, savings_at_goal: float, lumpsum_today: float
+) -> GoalFunding:
+    """Monthly SIP a goal still needs after its savings and lumpsum.
+
+    `savings_at_goal` is valued on the goal date (from split_savings);
+    `lumpsum_today` is new money invested in the goal's mix today.
+    """
+    still_needed = max(0.0, target.target_amount - savings_at_goal)
+    return sip_needed(still_needed, mix.expected_return, target.years_away, existing_lumpsum=lumpsum_today)
+
+
+def plan_affordability(fundings: list[GoalFunding], monthly_budget: float) -> Affordability:
+    """The SIPs of all goals together, compared with what the user can invest monthly."""
+    total_sip = sum(funding.monthly_sip for funding in fundings)
+    return check_affordability(total_sip, monthly_budget)
