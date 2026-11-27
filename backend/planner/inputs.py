@@ -11,6 +11,9 @@ from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 QuizAnswer = Annotated[int, Field(ge=1, le=4)]  # each risk-quiz answer is 1 to 4
 
+MAX_RETIREMENT_AGE = 75
+MAX_GOAL_YEARS = 40
+
 
 class ExistingSavings(BaseModel):
     """Money already invested, by type (each grows at its own rate)."""
@@ -30,7 +33,7 @@ class BigGoal(BaseModel):
 
     kind: Literal["house", "car", "education", "other"]
     cost_today: float = Field(gt=0)  # today's rupees
-    years_away: int = Field(ge=1, le=40)
+    years_away: int = Field(ge=1, le=MAX_GOAL_YEARS)
 
 
 class PlanInput(BaseModel):
@@ -53,7 +56,7 @@ class PlanInput(BaseModel):
     savings: ExistingSavings = Field(default_factory=ExistingSavings)
 
     # Goals
-    retirement_age: int = Field(ge=30, le=75)
+    retirement_age: int = Field(ge=30, le=MAX_RETIREMENT_AGE)
     retirement_monthly_expense: float = Field(gt=0)  # today's rupees
     big_goal: BigGoal | None = None
 
@@ -100,3 +103,12 @@ class PlanInput(BaseModel):
         if self.mode in ("lumpsum", "both") and self.lumpsum <= 0:
             raise ValueError(f"Mode '{self.mode}' needs a lumpsum amount")
         return self
+
+
+def with_changes(plan_input: PlanInput, **changes) -> PlanInput:
+    """A copy of the form with some answers changed, validated again.
+
+    Unlike plan_input.model_copy(update=...), this re-runs every check, so a
+    what-if can't produce an impossible form (e.g. retiring before today's age).
+    """
+    return PlanInput.model_validate(plan_input.model_dump() | changes)
