@@ -10,7 +10,7 @@ Estimates are focused hours. Status key: `[x]` done, `[ ]` to do.
 | 1 | Maths engine (`planner/sip.py`) | Done | 0 |
 | 2 | Investment policy and allocation (`planner/allocation.py`) | Done | 0 |
 | 3 | Fund data and screening | Done | 0 |
-| 4 | Plan builder (form in, full plan out) | In progress (1 of 4) | 4 |
+| 4 | Plan builder (form in, full plan out) | Done | 0 |
 | 5 | Agent (LangGraph) | Not started | 7 |
 | 6 | Fund Q&A with RAG | Not started | 4 |
 | 7 | Evals | Not started | 4 |
@@ -18,7 +18,7 @@ Estimates are focused hours. Status key: `[x]` done, `[ ]` to do.
 | 9 | AWS deploy (CDK) and CI/CD | Not started | 6 |
 | 10 | Frontend (Angular) | Not started | 8 |
 | 11 | Launch polish | Not started | 3 |
-| | **Total remaining** | | **~37** |
+| | **Total remaining** | | **~35** |
 
 ---
 
@@ -60,16 +60,12 @@ Turn the CFA policy tables into config plus code that applies them.
 - [x] One refresh command `python -m scripts.refresh_data` (fetch funds + metrics, warns on a stale TER file); nightly schedule comes in milestone 9
 
 ## 4. Plan builder
-- [x] Input model `planner/inputs.py` (Pydantic, frozen, extra=forbid): field ranges plus cross-field rules (retirement after age, outgoings < take-home, SIP budget fits, mode needs its amounts)
-- [ ] Orchestrate in `planner/plan.py`: form → goals → corpus → allocation → SIP per goal → affordability → funds → plan JSON
-  - [x] Piece 1: risk profile (willingness, ability, bucket, emergency fund)
-  - [x] Piece 2: money each goal needs (`big_goal_target`, `retirement_target`; inflation 6%, life to 85, 8% after retiring)
-  - [x] Piece 3a: mix and expected return per goal (`goal_mix`)
-  - [ ] Piece 3b: savings by type (EPF/PPF to retirement, MF/FD to big goal, excess to retirement); lumpsum to nearer goal first
-  - [ ] Piece 4: SIP per goal and affordability
-  - [ ] Piece 5: rupee split per category, top fund in each, crash test; `build_plan` ties it together
-- [ ] Shortfall levers: retire later, smaller goal, step-up SIP, use lumpsum
-- [ ] Plan versioning (previous snapshot for "was X" and Undo)
+- [x] Input model `planner/inputs.py` (Pydantic, frozen, extra=forbid): field ranges plus cross-field rules; `with_changes` re-validates what-if copies
+- [x] `planner/plan.py`: `build_plan(form)` → risk profile → goal targets → mix per goal → savings by type + lumpsum (nearer goal first) → SIP per goal → affordability → funds per goal → crash test on the first year
+- [x] Shortfall levers `planner/levers.py`: retire later, spend less in retirement, delay or shrink the big goal (smallest change that fits; binary search for amounts)
+- [x] Plan versioning `planner/history.py`: versions with reasons, "was Rs X" comparison, Undo (max 20 versions, original kept)
+- Not done (possible later): step-up SIP lever (needs a growing-SIP formula)
+- 213 tests; hand-written tests end here (milestones 5-7 use evals)
 
 ## 5. Agent (LangGraph)
 - [ ] Graph state schema (profile, plan, plan history, chat)
