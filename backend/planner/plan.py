@@ -12,13 +12,16 @@ import pandas as pd
 from planner.allocation import (
     DEFAULT_RETURN_ASSUMPTIONS,
     Allocation,
+    CrashTestResult,
     EmergencyFundStatus,
     EquitySplit,
     InvestmentType,
     ReturnAssumptions,
     RiskLevel,
     ability_level,
+    crash_test,
     emergency_fund_check,
+    equity_split,
     expected_return,
     goal_allocation,
     grow_existing_investments,
@@ -34,6 +37,7 @@ from planner.sip import (
     check_affordability,
     future_cost,
     future_value_lumpsum,
+    lumpsum_needed,
     retirement_corpus,
     sip_needed,
 )
@@ -275,3 +279,138 @@ def fund_amounts(
         )
         for category, rupees in split_amount(amount, shares).items()
     ]
+
+
+# --- Putting it together ----------------------------------------------------------
+
+
+@dataclass(frozen=True)
+class GoalPlan:
+    """Everything the dashboard shows for one goal."""
+
+    target: GoalTarget
+    mix: GoalMix
+    savings_at_goal: float  # existing savings counted for this goal, on its date
+    lumpsum_today: float  # new lumpsum invested for this goal today
+    funding: GoalFunding  # monthly SIP (or extra lumpsum) still needed
+    sip_funds: tuple[FundAmount, ...]  # the monthly SIP, fund by fund
+    lumpsum_funds: tuple[FundAmount, ...]  # the lumpsum, fund by fund
+    crash: CrashTestResult  # a severe crash on this goal's first year of investing
+
+
+@dataclass(frozen=True)
+class Plan:
+    """A complete plan: risk profile, each goal, and whether the SIPs fit the budget."""
+
+    risk: RiskProfile
+    goals: tuple[GoalPlan, ...]  # the big goal first (if any), then retirement
+    affordability: Affordability | None  # None in lumpsum-only mode (no monthly budget)
+
+
+def lumpsum_for_plan(plan_input: PlanInput) -> float:
+    """The lumpsum the plan may use: none in SIP-only mode, even if one was typed."""
+    return 0.0 if plan_input.mode == "sip" else plan_input.lumpsum
+
+
+def goal_plan(
+    target: GoalTarget,
+    mix: GoalMix,
+    split: EquitySplit,
+    *,
+    savings_at_goal: float,
+    lumpsum_today: float,
+    invest_monthly: bool,
+    picks: dict[str, list[FundPick]],
+) -> GoalPlan:
+    """One goal's funding, funds and crash test."""
+    funding = goal_funding(
+        target, mix, savings_at_goal=savings_at_goal, lumpsum_today=lumpsum_today
+    )
+    shares = category_shares(mix.allocation, split)
+    monthly_sip = funding.monthly_sip if invest_monthly else 0.0
+    return GoalPlan(
+        target=target,
+        mix=mix,
+        savings_at_goal=savings_at_goal,
+        lumpsum_today=lumpsum_today,
+        funding=funding,
+        sip_funds=tuple(fund_amounts(monthly_sip, shares, picks)),
+        lumpsum_funds=tuple(fund_amounts(lumpsum_today, shares, picks)),
+        crash=crash_test(lumpsum_today + 12 * monthly_sip, mix.allocation, split),
+    )
+
+
+def build_plan(
+    plan_input: PlanInput, picks: dict[str, list[FundPick]] | None = None
+) -> Plan:
+    """The complete plan for a validated form.
+
+    `picks` defaults to the funds in data/fund_metrics.csv; tests pass their own.
+    """
+    if picks is None:
+        picks = load_fund_picks()
+    invest_monthly = plan_input.mode != "lumpsum"
+
+    # 1. How much risk, and how equity is divided across categories.
+    risk = risk_profile(plan_input)
+    split = equity_split(risk.bucket)
+
+    # 2. What each goal costs, and how each is invested.
+    retirement = retirement_target(plan_input)
+    retirement_mix = goal_mix(risk.bucket, retirement.years_away)
+    big_goal = big_goal_target(plan_input.big_goal) if plan_input.big_goal else None
+    big_goal_mix = goal_mix(risk.bucket, big_goal.years_away) if big_goal else None
+
+    # 3. Existing savings by type, then the lumpsum: the big goal first.
+    savings_big, savings_retirement = split_savings(
+        plan_input.savings,
+        big_goal=big_goal,
+        retirement=retirement,
+        retirement_return=retirement_mix.expected_return,
+    )
+    lumpsum = lumpsum_for_plan(plan_input)
+    if big_goal:
+        big_goal_need_today = lumpsum_needed(
+            max(0.0, big_goal.target_amount - savings_big),
+            big_goal_mix.expected_return,
+            big_goal.years_away,
+        )
+        lumpsum_big, lumpsum_retirement = split_lumpsum(lumpsum, big_goal_need_today)
+    else:
+        lumpsum_big, lumpsum_retirement = 0.0, lumpsum
+
+    # 4. Each goal's SIP, funds and crash test.
+    goals = []
+    if big_goal:
+        goals.append(
+            goal_plan(
+                big_goal,
+                big_goal_mix,
+                split,
+                savings_at_goal=savings_big,
+                lumpsum_today=lumpsum_big,
+                invest_monthly=invest_monthly,
+                picks=picks,
+            )
+        )
+    goals.append(
+        goal_plan(
+            retirement,
+            retirement_mix,
+            split,
+            savings_at_goal=savings_retirement,
+            lumpsum_today=lumpsum_retirement,
+            invest_monthly=invest_monthly,
+            picks=picks,
+        )
+    )
+
+    # 5. Do all the SIPs together fit the monthly budget?
+    affordability = (
+        plan_affordability(
+            [goal.funding for goal in goals], plan_input.monthly_sip_budget
+        )
+        if invest_monthly
+        else None
+    )
+    return Plan(risk=risk, goals=tuple(goals), affordability=affordability)

@@ -9,17 +9,20 @@ from planner.plan import (
     GoalMix,
     GoalTarget,
     big_goal_target,
+    build_plan,
     category_shares,
     fund_amounts,
     fund_picks,
     goal_funding,
     goal_mix,
+    lumpsum_for_plan,
     plan_affordability,
     retirement_target,
     risk_profile,
     split_lumpsum,
     split_savings,
 )
+from planner.rupee_split import round_up_to_step
 from planner.sip import GoalFunding, sip_needed
 from tests.sample_forms import priya
 
@@ -313,3 +316,74 @@ def test_fund_amounts_puts_rupees_in_the_top_fund_of_each_category():
 
 def test_nothing_to_invest_means_no_funds():
     assert fund_amounts(0, {"debt": 1.0}, fund_picks(tiny_metrics())) == []
+
+
+# --- Piece 5b: the whole plan ---------------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    "mode, budget, expected",
+    [("sip", 40_000, 0.0), ("both", 40_000, 2_00_000), ("lumpsum", 0, 2_00_000)],
+)
+def test_lumpsum_for_plan_ignores_the_lumpsum_in_sip_mode(mode, budget, expected):
+    assert lumpsum_for_plan(priya(mode=mode, monthly_sip_budget=budget)) == expected
+
+
+def test_priya_full_plan():
+    """Moderate; house SIP ~17,166 and retirement ~61,893; 39,059 over budget."""
+    plan = build_plan(priya(), picks=fund_picks(tiny_metrics()))
+    house, retirement = plan.goals
+    assert plan.risk.bucket == RiskLevel.MODERATE
+    assert (house.target.name, retirement.target.name) == ("house", "retirement")
+    assert house.funding.monthly_sip == pytest.approx(17_166, abs=1)
+    assert retirement.funding.monthly_sip == pytest.approx(61_893, abs=1)
+    assert plan.affordability.shortfall == pytest.approx(39_059, abs=2)
+    assert house.lumpsum_today == 2_00_000 and retirement.lumpsum_today == 0
+
+
+def test_fund_amounts_add_up_to_each_goals_sip_and_lumpsum():
+    plan = build_plan(priya(), picks=fund_picks(tiny_metrics()))
+    for goal in plan.goals:
+        assert sum(item.amount for item in goal.sip_funds) == round_up_to_step(
+            goal.funding.monthly_sip
+        )
+    house = plan.goals[0]
+    assert sum(item.amount for item in house.lumpsum_funds) == 2_00_000
+
+
+def test_crash_test_covers_the_first_year_of_investing():
+    """House: Rs2L lumpsum + 12 x ~Rs17,166 SIP, about Rs4.06L, falls in a crash."""
+    house = build_plan(priya(), picks=fund_picks(tiny_metrics())).goals[0]
+    assert house.crash.value_before == pytest.approx(
+        2_00_000 + 12 * house.funding.monthly_sip
+    )
+    assert house.crash.value_after < house.crash.value_before
+
+
+def test_without_a_big_goal_everything_goes_to_retirement():
+    plan = build_plan(priya(big_goal=None), picks=fund_picks(tiny_metrics()))
+    (retirement,) = plan.goals
+    assert retirement.lumpsum_today == 2_00_000
+    assert retirement.savings_at_goal == pytest.approx(
+        2_00_000 * 1.12**20
+        + 1_00_000 * 1.07**20
+        + 3_00_000 * 1.0825**20
+        + 1_50_000 * 1.071**20
+    )
+
+
+def test_sip_mode_ignores_the_lumpsum_so_the_house_sip_is_higher():
+    picks = fund_picks(tiny_metrics())
+    both = build_plan(priya(), picks=picks).goals[0]
+    sip_only = build_plan(priya(mode="sip"), picks=picks).goals[0]
+    assert sip_only.lumpsum_today == 0
+    assert sip_only.funding.monthly_sip > both.funding.monthly_sip
+
+
+def test_lumpsum_mode_has_no_sips_and_no_budget_check():
+    plan = build_plan(
+        priya(mode="lumpsum", monthly_sip_budget=0), picks=fund_picks(tiny_metrics())
+    )
+    assert plan.affordability is None
+    assert all(goal.sip_funds == () for goal in plan.goals)
+    assert plan.goals[1].funding.lumpsum_needed_today > 0  # retirement still needs more
