@@ -18,6 +18,7 @@ from pydantic import BaseModel, Field, ValidationError
 
 from agent.state import AgentState
 from agent.summaries import change_summary, levers_summary, plan_summary
+from planner.inputs import ExcludableCategory, RiskCap
 from planner.history import apply_change, compare, last_change, undo
 from planner.levers import shortfall_levers
 from planner.plan import FundPick, load_fund_picks
@@ -45,6 +46,14 @@ class WhatIfChanges(BaseModel):
     lumpsum: float | None = Field(None, description="One-time amount available to invest today")
     big_goal_cost_today: float | None = Field(None, description="Cost of the big goal in today's rupees")
     big_goal_years_away: int | None = Field(None, description="Years until the big goal")
+    excluded_categories: list[ExcludableCategory] | None = Field(
+        None,
+        description="The full list of fund categories to leave out after the change "
+        "(e.g. add 'gold' to remove gold; an empty list brings every category back)",
+    )
+    max_risk: RiskCap | None = Field(
+        None, description="A risk ceiling: 'conservative' or 'moderate'"
+    )
 
 
 def form_changes(changes: WhatIfChanges, current_big_goal) -> dict:

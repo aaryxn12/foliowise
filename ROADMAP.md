@@ -11,14 +11,14 @@ Estimates are focused hours. Status key: `[x]` done, `[ ]` to do.
 | 2 | Investment policy and allocation (`planner/allocation.py`) | Done | 0 |
 | 3 | Fund data and screening | Done | 0 |
 | 4 | Plan builder (form in, full plan out) | Done | 0 |
-| 5 | Agent (LangGraph) | In progress (5 of 7) | 2 |
+| 5 | Agent (LangGraph) | Done (DynamoDB saver moves to 9) | 0 |
 | 6 | Fund Q&A with RAG | Not started | 4 |
 | 7 | Evals | Not started | 4 |
 | 8 | API (FastAPI) | Not started | 3 |
 | 9 | AWS deploy (CDK) and CI/CD | Not started | 6 |
 | 10 | Frontend (Angular) | Not started | 8 |
 | 11 | Launch polish | Not started | 3 |
-| | **Total remaining** | | **~30** |
+| | **Total remaining** | | **~28** |
 
 ---
 
@@ -70,11 +70,12 @@ Turn the CFA policy tables into config plus code that applies them.
 ## 5. Agent (LangGraph)
 - [x] Graph state `agent/state.py`: chat messages + `PlanHistory`; in-memory checkpointer with an allow-list of planner types (`agent/graph.py`)
 - [x] Engine functions as tools `agent/tools.py`: `show_plan`, `try_what_if`, `suggest_fixes`, `undo_last_change`; state injected (hidden from the LLM); results from `agent/summaries.py`, every number pre-formatted (`planner/formatting.py`)
-- [~] Router: tool choice + system prompt (`agent/prompts.py`) handles plan questions, what-ifs, fixes, undo and refusals; a separate fund Q&A route comes with RAG in milestone 6
+- [x] Router: tool choice + system prompt (`agent/prompts.py`) handles plan questions, what-ifs, fixes, undo and refusals; a separate fund Q&A route comes with RAG in milestone 6
 - [x] What-if: `try_what_if` validates the change (`with_changes`), re-runs the plan, returns answers changed before → after and each goal's SIP now vs before, plus the shortfall
-- [ ] Free-text "anything else?" → structured constraints
+- [x] Free-text "anything else?" → rules (`agent/rules.py`, structured output): excluded categories (flexi/mid/small/gold; large cap index and debt always stay) and a risk ceiling; anything else listed as "noted but not applied". Planner applies them to the mix itself (`without_gold`, `without_equity_categories`, `cap_risk`), so return, SIP, funds and crash test all follow; what-ifs can change them too
 - [~] Saving the chat: in-memory now (lost on restart); DynamoDB checkpointer moves to milestone 9 (avoids a ~500 MB DynamoDB Local Docker image)
 - [x] Model swap `agent/llm.py`: `FOLIOWISE_LLM=groq` (gpt-oss-120b, reasoning effort low) or `anthropic` (Claude Haiku 5.5)
+- Known simplification: returns are per asset class (equity 12%), so excluding mid or small caps doesn't change the SIP, only the crash test. Document in the README.
 - Terminal chat for manual checks: `python -m scripts.chat` (Priya's sample form)
 - Lessons from the first chats: the LLM invented "instead of 55" and mislabelled a future cost as today's; fixed by giving tools every fact with clear names, not by prompt wording. Tuples came back as lists after a checkpoint save/load; fixed in the dataclasses.
 

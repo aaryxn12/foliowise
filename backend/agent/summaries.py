@@ -34,6 +34,8 @@ def answers_summary(plan_input: PlanInput) -> dict:
         "monthly_sip_budget": format_rupees(plan_input.monthly_sip_budget),
         "lumpsum_available": format_rupees(plan_input.lumpsum),
         "mode": plan_input.mode,
+        "excluded_categories": ", ".join(plan_input.excluded_categories) or "none",
+        "risk_ceiling": plan_input.max_risk or "none",
     }
     if plan_input.big_goal is not None:
         answers["big_goal"] = plan_input.big_goal.kind

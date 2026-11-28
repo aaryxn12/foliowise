@@ -12,6 +12,11 @@ from pydantic import BaseModel, ConfigDict, Field, model_validator
 QuizAnswer = Annotated[int, Field(ge=1, le=4)]  # each risk-quiz answer is 1 to 4
 
 MAX_RETIREMENT_AGE = 75
+
+# Fund categories a user may rule out. Large cap index and debt are the core of
+# every plan, so they always stay.
+ExcludableCategory = Literal["flexi_cap", "mid_cap", "small_cap", "gold"]
+RiskCap = Literal["conservative", "moderate"]
 MAX_GOAL_YEARS = 40
 
 
@@ -65,7 +70,11 @@ class PlanInput(BaseModel):
     mode: Literal["sip", "lumpsum", "both"] = "sip"
     monthly_sip_budget: float = Field(0, ge=0)  # what the user can invest each month
     lumpsum: float = Field(0, ge=0)  # one-time amount available today
-    notes: str = Field("", max_length=1000)  # free text; the agent reads it later
+    notes: str = Field("", max_length=1000)  # free text; the agent turns it into the rules below
+
+    # Rules from the notes (or a what-if): categories to leave out, and a risk ceiling.
+    excluded_categories: list[ExcludableCategory] = Field(default_factory=list)
+    max_risk: RiskCap | None = None  # never take more risk than this, whatever the quiz says
 
     @property
     def monthly_spare(self) -> float:

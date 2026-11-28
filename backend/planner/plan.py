@@ -60,6 +60,13 @@ class RiskProfile:
     emergency_fund: EmergencyFundStatus
 
 
+def cap_risk(bucket: RiskLevel, max_risk: str | None) -> RiskLevel:
+    """The bucket, lowered to the user's own ceiling if they set one (e.g. "moderate")."""
+    if max_risk is None:
+        return bucket
+    return min(bucket, RiskLevel[max_risk.upper()])
+
+
 def risk_profile(plan_input: PlanInput) -> RiskProfile:
     """Work out the user's risk bucket and emergency fund status."""
 
@@ -73,7 +80,7 @@ def risk_profile(plan_input: PlanInput) -> RiskProfile:
         spouse_earns=plan_input.spouse_earns,
         emi_to_income=plan_input.monthly_emis / plan_input.monthly_take_home,
     )
-    bucket = risk_bucket(willingness, ability)
+    bucket = cap_risk(risk_bucket(willingness, ability), plan_input.max_risk)
     return RiskProfile(
         willingness=willingness,
         ability=ability,
@@ -116,6 +123,27 @@ def retirement_target(plan_input: PlanInput) -> GoalTarget:
     )
 
 
+def without_gold(allocation: Allocation) -> Allocation:
+    """The same allocation with gold's share moved to debt (the safer home)."""
+    return Allocation(equity=allocation.equity, debt=allocation.debt + allocation.gold, gold=0.0)
+
+
+def without_equity_categories(split: EquitySplit, excluded: list[str]) -> EquitySplit:
+    """The equity split with some categories left out, the rest scaled up to total 1.
+
+    Large cap index can't be excluded, and every risk level gives it a share, so
+    there is always somewhere for the equity money to go.
+    """
+    kept = {
+        "large_cap": split.large_cap,
+        "flexi_cap": 0.0 if "flexi_cap" in excluded else split.flexi_cap,
+        "mid_cap": 0.0 if "mid_cap" in excluded else split.mid_cap,
+        "small_cap": 0.0 if "small_cap" in excluded else split.small_cap,
+    }
+    total = sum(kept.values())
+    return EquitySplit(**{name: share / total for name, share in kept.items()})
+
+
 @dataclass(frozen=True)
 class GoalMix:
     """How a goal's money is invested, and the yearly return that mix assumes."""
@@ -128,9 +156,13 @@ def goal_mix(
     bucket: RiskLevel,
     years_away: int,
     assumptions: ReturnAssumptions = DEFAULT_RETURN_ASSUMPTIONS,
+    *,
+    exclude_gold: bool = False,
 ) -> GoalMix:
     """The mix for a goal this far away, at this risk level, and its expected return."""
     allocation = goal_allocation(bucket, years_away)
+    if exclude_gold:
+        allocation = without_gold(allocation)
     return GoalMix(
         allocation=allocation, expected_return=expected_return(allocation, assumptions)
     )
@@ -366,13 +398,17 @@ def build_plan(
 
     # 1. How much risk, and how equity is divided across categories.
     risk = risk_profile(plan_input)
-    split = equity_split(risk.bucket)
+    excluded = plan_input.excluded_categories
+    split = without_equity_categories(equity_split(risk.bucket), excluded)
+    exclude_gold = "gold" in excluded
 
     # 2. What each goal costs, and how each is invested.
     retirement = retirement_target(plan_input)
-    retirement_mix = goal_mix(risk.bucket, retirement.years_away)
+    retirement_mix = goal_mix(risk.bucket, retirement.years_away, exclude_gold=exclude_gold)
     big_goal = big_goal_target(plan_input.big_goal) if plan_input.big_goal else None
-    big_goal_mix = goal_mix(risk.bucket, big_goal.years_away) if big_goal else None
+    big_goal_mix = (
+        goal_mix(risk.bucket, big_goal.years_away, exclude_gold=exclude_gold) if big_goal else None
+    )
 
     # 3. Existing savings by type, then the lumpsum: the big goal first.
     savings_big, savings_retirement = split_savings(
