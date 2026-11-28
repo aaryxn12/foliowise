@@ -1,3 +1,7 @@
 pandas
 openpyxl
 pydantic
+langchain-core
+langchain-groq
+langgraph
+python-dotenv
