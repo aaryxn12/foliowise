@@ -28,6 +28,11 @@ class PlanHistory:
 
     versions: tuple[PlanVersion, ...]
 
+    def __post_init__(self) -> None:
+        # A saved chat comes back from the checkpointer with lists where tuples
+        # were (its storage format has no tuples), so turn them back into one.
+        object.__setattr__(self, "versions", tuple(self.versions))
+
     @property
     def current(self) -> PlanVersion:
         return self.versions[-1]
@@ -55,6 +60,12 @@ class PlanChange:
     old_total_sip: float
     new_total_sip: float
     now_affordable: bool
+    monthly_budget: float | None  # None in lumpsum-only mode
+    new_shortfall: float  # how much the new total exceeds the budget (0 if it fits)
+
+    def __post_init__(self) -> None:
+        # A checkpointer stores tuples as lists; turn them back (see PlanHistory).
+        object.__setattr__(self, "goals", tuple(self.goals))
 
 
 def start_history(
@@ -78,7 +89,7 @@ def apply_change(
     """
     plan_input = with_changes(history.current.plan_input, **changes)
     version = PlanVersion(plan_input, build_plan(plan_input, picks), reason)
-    versions = history.versions + (version,)
+    versions = (*history.versions, version)
     if len(versions) > MAX_VERSIONS:
         versions = versions[:1] + versions[-(MAX_VERSIONS - 1) :]  # keep the original
     return PlanHistory(versions)
@@ -114,6 +125,8 @@ def compare(old: Plan, new: Plan) -> PlanChange:
         new_total_sip=sum(new_sips.values()),
         now_affordable=new.affordability is not None
         and new.affordability.is_affordable,
+        monthly_budget=new.affordability.sip_affordable if new.affordability else None,
+        new_shortfall=new.affordability.shortfall if new.affordability else 0.0,
     )
 
 

@@ -9,6 +9,7 @@ import re
 from planner.allocation import Allocation
 from planner.formatting import format_percent, format_rupees
 from planner.history import PlanChange
+from planner.inputs import PlanInput
 from planner.levers import Lever
 from planner.plan import GoalPlan, Plan
 
@@ -20,6 +21,35 @@ PLAN_SUFFIX = re.compile(
 def short_fund_name(scheme_name: str) -> str:
     """A fund name without the plan and option, e.g. "Parag Parikh Flexi Cap Fund"."""
     return PLAN_SUFFIX.sub("", scheme_name)
+
+
+def answers_summary(plan_input: PlanInput) -> dict:
+    """The user's own answers that the plan depends on, display-ready."""
+    answers = {
+        "age": plan_input.age,
+        "retirement_age": plan_input.retirement_age,
+        "retirement_monthly_spend_in_todays_rupees": format_rupees(
+            plan_input.retirement_monthly_expense
+        ),
+        "monthly_sip_budget": format_rupees(plan_input.monthly_sip_budget),
+        "lumpsum_available": format_rupees(plan_input.lumpsum),
+        "mode": plan_input.mode,
+    }
+    if plan_input.big_goal is not None:
+        answers["big_goal"] = plan_input.big_goal.kind
+        answers["big_goal_cost_today"] = format_rupees(plan_input.big_goal.cost_today)
+        answers["big_goal_years_away"] = plan_input.big_goal.years_away
+    return answers
+
+
+def answers_changed(before: PlanInput, after: PlanInput) -> dict:
+    """Each answer that differs between two forms, as {"before": ..., "after": ...}."""
+    old, new = answers_summary(before), answers_summary(after)
+    return {
+        key: {"before": old.get(key), "after": new.get(key)}
+        for key in old | new
+        if old.get(key) != new.get(key)
+    }
 
 
 def mix_summary(allocation: Allocation) -> str:
@@ -36,11 +66,11 @@ def goal_summary(goal: GoalPlan, *, monthly: bool) -> dict:
     summary = {
         "goal": goal.target.name,
         "years_away": goal.target.years_away,
-        "cost_then": format_rupees(goal.target.target_amount),
+        "cost_when_due": format_rupees(goal.target.target_amount),  # after inflation
         "mix": mix_summary(goal.mix.allocation),
         "expected_return": format_percent(goal.mix.expected_return),
-        "savings_counted": format_rupees(goal.savings_at_goal),
-        "lumpsum_today": format_rupees(goal.lumpsum_today),
+        "existing_savings_counted": format_rupees(goal.savings_at_goal),  # on the goal date
+        "new_lumpsum_invested": format_rupees(goal.lumpsum_today),
         "lumpsum_funds": [
             {
                 "fund": short_fund_name(item.fund.scheme_name),
@@ -70,9 +100,10 @@ def goal_summary(goal: GoalPlan, *, monthly: bool) -> dict:
     return summary
 
 
-def plan_summary(plan: Plan) -> dict:
-    """The whole plan: risk level, every goal, and whether it fits the budget."""
+def plan_summary(plan: Plan, plan_input: PlanInput) -> dict:
+    """The whole plan: the user's answers, risk level, every goal, and whether it fits."""
     summary = {
+        "your_answers": answers_summary(plan_input),
         "risk_level": plan.risk.bucket.name.lower(),
         "emergency_fund": (
             "adequate"
@@ -94,10 +125,13 @@ def plan_summary(plan: Plan) -> dict:
     return summary
 
 
-def change_summary(reason: str, change: PlanChange) -> dict:
-    """What a what-if did, goal by goal: the "now Rs X, was Rs Y" numbers."""
+def change_summary(
+    reason: str, change: PlanChange, *, before: PlanInput, after: PlanInput
+) -> dict:
+    """What a change did: the answers changed, then each goal's SIP now versus before."""
     return {
         "change": reason,
+        "answers_changed": answers_changed(before, after),
         "goals": [
             {
                 "goal": goal.goal,
@@ -108,7 +142,18 @@ def change_summary(reason: str, change: PlanChange) -> dict:
         ],
         "total_now": format_rupees(change.new_total_sip),
         "total_before": format_rupees(change.old_total_sip),
+        **budget_summary(change),
+    }
+
+
+def budget_summary(change: PlanChange) -> dict:
+    """The budget, and how far the new total is over it (nothing in lumpsum-only mode)."""
+    if change.monthly_budget is None:
+        return {}
+    return {
+        "monthly_budget": format_rupees(change.monthly_budget),
         "fits_budget_now": change.now_affordable,
+        "monthly_shortfall_now": format_rupees(change.new_shortfall),
     }
 
 

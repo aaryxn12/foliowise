@@ -3,6 +3,7 @@ from pydantic import ValidationError
 
 from planner.history import (
     MAX_VERSIONS,
+    PlanHistory,
     apply_change,
     compare,
     last_change,
@@ -65,6 +66,8 @@ def test_retiring_later_lowers_the_retirement_sip_only():
     assert retirement.goal == "retirement" and retirement.new_sip < retirement.old_sip
     assert change.new_total_sip < change.old_total_sip
     assert change.old_total_sip == pytest.approx(79_059, abs=2)
+    assert change.monthly_budget == 40_000
+    assert change.new_shortfall == pytest.approx(change.new_total_sip - 40_000)
 
 
 def test_compare_shows_zero_for_a_removed_goal():
@@ -109,3 +112,14 @@ def test_undo_twice_after_two_changes():
 def test_the_original_plan_cannot_be_undone():
     with pytest.raises(ValueError, match="Nothing to undo"):
         undo(start_history(priya(), PICKS))
+
+
+def test_history_loaded_with_a_list_still_works():
+    """A checkpointer stores tuples as lists; a history rebuilt from one must still
+    take new changes and undo."""
+    original = start_history(priya(), PICKS)
+    loaded = PlanHistory(list(original.versions))  # what a save -> load gives back
+    assert isinstance(loaded.versions, tuple)
+    changed = apply_change(loaded, "Retire at 58", PICKS, retirement_age=58)
+    assert len(changed.versions) == 2
+    assert undo(changed).current.reason == "Original plan"

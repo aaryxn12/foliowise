@@ -246,6 +246,10 @@ class FundAmount:
     fund: FundPick
     alternatives: tuple[FundPick, ...]  # the next best funds in the same category
 
+    def __post_init__(self) -> None:
+        # A checkpointer stores tuples as lists; turn them back (see PlanHistory).
+        object.__setattr__(self, "alternatives", tuple(self.alternatives))
+
 
 def fund_picks(metrics: pd.DataFrame) -> dict[str, list[FundPick]]:
     """Each category's shortlisted funds, best first, from fund_metrics.csv data."""
@@ -297,6 +301,11 @@ class GoalPlan:
     lumpsum_funds: tuple[FundAmount, ...]  # the lumpsum, fund by fund
     crash: CrashTestResult  # a severe crash on this goal's first year of investing
 
+    def __post_init__(self) -> None:
+        # A checkpointer stores tuples as lists; turn them back (see PlanHistory).
+        object.__setattr__(self, "sip_funds", tuple(self.sip_funds))
+        object.__setattr__(self, "lumpsum_funds", tuple(self.lumpsum_funds))
+
 
 @dataclass(frozen=True)
 class Plan:
@@ -305,6 +314,10 @@ class Plan:
     risk: RiskProfile
     goals: tuple[GoalPlan, ...]  # the big goal first (if any), then retirement
     affordability: Affordability | None  # None in lumpsum-only mode (no monthly budget)
+
+    def __post_init__(self) -> None:
+        # A checkpointer stores tuples as lists; turn them back (see PlanHistory).
+        object.__setattr__(self, "goals", tuple(self.goals))
 
 
 def lumpsum_for_plan(plan_input: PlanInput) -> float:

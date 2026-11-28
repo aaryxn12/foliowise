@@ -18,7 +18,7 @@ from pydantic import BaseModel, Field, ValidationError
 
 from agent.state import AgentState
 from agent.summaries import change_summary, levers_summary, plan_summary
-from planner.history import apply_change, last_change, undo
+from planner.history import apply_change, compare, last_change, undo
 from planner.levers import shortfall_levers
 from planner.plan import FundPick, load_fund_picks
 
@@ -68,7 +68,8 @@ def show_plan(state: Annotated[AgentState, InjectedState]) -> str:
     its cost, investment mix, expected return, monthly SIP, funds and crash test,
     plus whether the total fits the monthly budget. Use it to answer any question
     about the plan; never work out these numbers yourself."""
-    return to_json(plan_summary(state["history"].current.plan))
+    current = state["history"].current
+    return to_json(plan_summary(current.plan, current.plan_input))
 
 
 @tool
@@ -90,7 +91,14 @@ def try_what_if(
         # Report the problem to the LLM instead of crashing; the plan is unchanged.
         message = f"Change not applied: {error}"
         return Command(update={"messages": [ToolMessage(message, tool_call_id=tool_call_id)]})
-    result = to_json(change_summary(reason, last_change(new_history)))
+    result = to_json(
+        change_summary(
+            reason,
+            last_change(new_history),
+            before=history.current.plan_input,
+            after=new_history.current.plan_input,
+        )
+    )
     return Command(
         update={
             "history": new_history,
@@ -115,14 +123,21 @@ def undo_last_change(
     state: Annotated[AgentState, InjectedState],
     tool_call_id: Annotated[str, InjectedToolCallId],
 ) -> Command:
-    """Undo the most recent what-if, going back to the previous plan."""
+    """Undo the most recent what-if, going back to the previous plan. Reports the
+    answers and each goal's monthly SIP after undoing versus before."""
     history = state["history"]
     try:
         new_history = undo(history)
     except ValueError:
         message = "Nothing to undo: this is the original plan."
         return Command(update={"messages": [ToolMessage(message, tool_call_id=tool_call_id)]})
-    message = f"Undid: {history.current.reason}. Back to: {new_history.current.reason}."
+    summary = change_summary(
+        f"Undid '{history.current.reason}'; back to '{new_history.current.reason}'",
+        compare(history.current.plan, new_history.current.plan),
+        before=history.current.plan_input,
+        after=new_history.current.plan_input,
+    )
+    message = to_json(summary)
     return Command(
         update={
             "history": new_history,
