@@ -40,6 +40,8 @@ def chat_model(provider: str | None = None) -> BaseChatModel:
         try:
             from langchain_anthropic import ChatAnthropic
         except ImportError as error:  # only installed for the live site (milestone 9)
-            raise ImportError("Run `pip install langchain-anthropic` to use Claude") from error
+            raise ImportError(
+                "Run `pip install langchain-anthropic` to use Claude"
+            ) from error
         return ChatAnthropic(model=MODELS["anthropic"], temperature=TEMPERATURE)
     raise ValueError(f"Unknown FOLIOWISE_LLM {provider!r}; use one of {sorted(MODELS)}")

@@ -75,7 +75,9 @@ def test_spend_less_finds_the_highest_spending_that_fits():
     spend = lever.plan_input.retirement_monthly_expense
     assert spend < 50_000 and spend % 1_000 == 0
     assert fits_budget(lever.plan_input, PICKS)
-    assert not fits_budget(with_changes(priya(), retirement_monthly_expense=spend + 1_000), PICKS)
+    assert not fits_budget(
+        with_changes(priya(), retirement_monthly_expense=spend + 1_000), PICKS
+    )
 
 
 def test_delay_and_cheaper_goal_cannot_close_a_gap_this_big():
@@ -93,14 +95,19 @@ def test_house_levers_work_when_the_house_is_the_problem():
     cheaper = cheaper_big_goal(form, PICKS)
     assert delayed.plan_input.big_goal.years_away > 7
     assert cheaper.plan_input.big_goal.cost_today < 20_00_000
-    assert fits_budget(delayed.plan_input, PICKS) and fits_budget(cheaper.plan_input, PICKS)
+    assert fits_budget(delayed.plan_input, PICKS) and fits_budget(
+        cheaper.plan_input, PICKS
+    )
 
 
 # --- All levers together ---------------------------------------------------------------
 
 
 def test_an_affordable_plan_needs_no_levers():
-    assert shortfall_levers(priya(retirement_monthly_expense=10_000, big_goal=None), PICKS) == []
+    assert (
+        shortfall_levers(priya(retirement_monthly_expense=10_000, big_goal=None), PICKS)
+        == []
+    )
 
 
 def test_lumpsum_only_plans_get_no_levers():

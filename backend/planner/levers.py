@@ -8,10 +8,13 @@ import math
 from collections.abc import Callable
 from dataclasses import dataclass
 
+from planner.formatting import format_rupees
 from planner.inputs import MAX_GOAL_YEARS, MAX_RETIREMENT_AGE, PlanInput, with_changes
 from planner.plan import FundPick, build_plan, load_fund_picks
 
-MAX_GOAL_DELAY_YEARS = 10  # beyond this, "delay the goal" stops being a useful suggestion
+MAX_GOAL_DELAY_YEARS = (
+    10  # beyond this, "delay the goal" stops being a useful suggestion
+)
 RETIREMENT_SPEND_STEP = 1_000  # suggest monthly retirement spending in Rs1,000 steps
 GOAL_COST_STEP = 10_000  # suggest big-goal costs in Rs10,000 steps
 
@@ -22,7 +25,9 @@ class Lever:
 
     kind: str  # "retire_later", "spend_less_in_retirement", "delay_big_goal", "cheaper_big_goal"
     description: str  # e.g. "Retire at 56 instead of 50"
-    plan_input: PlanInput  # the changed form; build_plan(lever.plan_input) shows the new plan
+    plan_input: (
+        PlanInput  # the changed form; build_plan(lever.plan_input) shows the new plan
+    )
     monthly_sip: float  # total SIP needed after the change
 
 
@@ -39,7 +44,9 @@ def make_lever(
     return Lever(kind, description, plan_input, monthly_sip)
 
 
-def largest_that_fits(low: float, high: float, fits: Callable[[float], bool], step: float) -> float | None:
+def largest_that_fits(
+    low: float, high: float, fits: Callable[[float], bool], step: float
+) -> float | None:
     """The largest multiple of `step` between `low` and `high` for which `fits` is True.
 
     Binary search: assumes `fits` is True for small values and turns False past
@@ -58,7 +65,9 @@ def largest_that_fits(low: float, high: float, fits: Callable[[float], bool], st
     return lowest * step
 
 
-def retire_later(plan_input: PlanInput, picks: dict[str, list[FundPick]]) -> Lever | None:
+def retire_later(
+    plan_input: PlanInput, picks: dict[str, list[FundPick]]
+) -> Lever | None:
     """The earliest retirement age, after the current choice, at which the plan fits."""
     for age in range(plan_input.retirement_age + 1, MAX_RETIREMENT_AGE + 1):
         changed = with_changes(plan_input, retirement_age=age)
@@ -68,14 +77,18 @@ def retire_later(plan_input: PlanInput, picks: dict[str, list[FundPick]]) -> Lev
     return None  # even retiring at MAX_RETIREMENT_AGE doesn't fit
 
 
-def delay_big_goal(plan_input: PlanInput, picks: dict[str, list[FundPick]]) -> Lever | None:
+def delay_big_goal(
+    plan_input: PlanInput, picks: dict[str, list[FundPick]]
+) -> Lever | None:
     """The fewest extra years of waiting for the big goal that make the plan fit."""
     goal = plan_input.big_goal
     if goal is None:
         return None
     last = min(goal.years_away + MAX_GOAL_DELAY_YEARS, MAX_GOAL_YEARS)
     for years in range(goal.years_away + 1, last + 1):
-        changed = with_changes(plan_input, big_goal=goal.model_dump() | {"years_away": years})
+        changed = with_changes(
+            plan_input, big_goal=goal.model_dump() | {"years_away": years}
+        )
         if fits_budget(changed, picks):
             return make_lever(
                 "delay_big_goal",
@@ -86,39 +99,54 @@ def delay_big_goal(plan_input: PlanInput, picks: dict[str, list[FundPick]]) -> L
     return None
 
 
-def spend_less_in_retirement(plan_input: PlanInput, picks: dict[str, list[FundPick]]) -> Lever | None:
+def spend_less_in_retirement(
+    plan_input: PlanInput, picks: dict[str, list[FundPick]]
+) -> Lever | None:
     """The highest monthly retirement spending (in today's rupees) at which the plan fits."""
     current = plan_input.retirement_monthly_expense
 
     def fits(spend: float) -> bool:
-        return fits_budget(with_changes(plan_input, retirement_monthly_expense=spend), picks)
+        return fits_budget(
+            with_changes(plan_input, retirement_monthly_expense=spend), picks
+        )
 
-    spend = largest_that_fits(RETIREMENT_SPEND_STEP, current, fits, RETIREMENT_SPEND_STEP)
+    spend = largest_that_fits(
+        RETIREMENT_SPEND_STEP, current, fits, RETIREMENT_SPEND_STEP
+    )
     if spend is None or spend >= current:
         return None
     return make_lever(
         "spend_less_in_retirement",
-        f"Plan to spend Rs{spend:,.0f} a month in retirement instead of Rs{current:,.0f}",
+        f"Plan to spend {format_rupees(spend)} a month in retirement instead of {format_rupees(current)}",
         with_changes(plan_input, retirement_monthly_expense=spend),
         picks,
     )
 
 
-def cheaper_big_goal(plan_input: PlanInput, picks: dict[str, list[FundPick]]) -> Lever | None:
+def cheaper_big_goal(
+    plan_input: PlanInput, picks: dict[str, list[FundPick]]
+) -> Lever | None:
     """The highest cost today for the big goal at which the plan fits."""
     goal = plan_input.big_goal
     if goal is None:
         return None
 
     def changed(cost: float) -> PlanInput:
-        return with_changes(plan_input, big_goal=goal.model_dump() | {"cost_today": cost})
+        return with_changes(
+            plan_input, big_goal=goal.model_dump() | {"cost_today": cost}
+        )
 
-    cost = largest_that_fits(GOAL_COST_STEP, goal.cost_today, lambda c: fits_budget(changed(c), picks), GOAL_COST_STEP)
+    cost = largest_that_fits(
+        GOAL_COST_STEP,
+        goal.cost_today,
+        lambda c: fits_budget(changed(c), picks),
+        GOAL_COST_STEP,
+    )
     if cost is None or cost >= goal.cost_today:
         return None
     return make_lever(
         "cheaper_big_goal",
-        f"Aim for a {goal.kind} costing Rs{cost:,.0f} today instead of Rs{goal.cost_today:,.0f}",
+        f"Aim for a {goal.kind} costing {format_rupees(cost)} today instead of {format_rupees(goal.cost_today)}",
         changed(cost),
         picks,
     )

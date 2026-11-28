@@ -26,7 +26,9 @@ def test_a_new_history_holds_only_the_original_plan():
 
 def test_a_change_adds_a_version_and_keeps_the_old_one():
     original = start_history(priya(), PICKS)
-    changed = apply_change(original, "Retire at 58 instead of 50", PICKS, retirement_age=58)
+    changed = apply_change(
+        original, "Retire at 58 instead of 50", PICKS, retirement_age=58
+    )
     assert len(changed.versions) == 2
     assert changed.current.plan_input.retirement_age == 58
     assert changed.previous.plan_input.retirement_age == 50
@@ -36,19 +38,26 @@ def test_a_change_adds_a_version_and_keeps_the_old_one():
 def test_changes_build_on_the_current_version():
     history = start_history(priya(), PICKS)
     history = apply_change(history, "Retire at 58", PICKS, retirement_age=58)
-    history = apply_change(history, "Spend less", PICKS, retirement_monthly_expense=40_000)
+    history = apply_change(
+        history, "Spend less", PICKS, retirement_monthly_expense=40_000
+    )
     assert history.current.plan_input.retirement_age == 58  # the first change is kept
     assert history.current.plan_input.retirement_monthly_expense == 40_000
 
 
 def test_an_invalid_change_is_refused():
     with pytest.raises(ValidationError):
-        apply_change(start_history(priya(), PICKS), "Too early", PICKS, retirement_age=25)
+        apply_change(
+            start_history(priya(), PICKS), "Too early", PICKS, retirement_age=25
+        )
 
 
 def test_retiring_later_lowers_the_retirement_sip_only():
     history = apply_change(
-        start_history(priya(), PICKS), "Retire at 58 instead of 50", PICKS, retirement_age=58
+        start_history(priya(), PICKS),
+        "Retire at 58 instead of 50",
+        PICKS,
+        retirement_age=58,
     )
     change = last_change(history)
     house, retirement = change.goals
@@ -68,7 +77,9 @@ def test_compare_shows_zero_for_a_removed_goal():
 def test_history_is_capped_but_keeps_the_original():
     history = start_history(priya(), PICKS)
     for step in range(MAX_VERSIONS + 5):
-        history = apply_change(history, f"Change {step}", PICKS, monthly_sip_budget=30_000 + step)
+        history = apply_change(
+            history, f"Change {step}", PICKS, monthly_sip_budget=30_000 + step
+        )
     assert len(history.versions) == MAX_VERSIONS
     assert history.versions[0].reason == "Original plan"
     assert history.current.reason == f"Change {MAX_VERSIONS + 4}"
@@ -88,7 +99,9 @@ def test_undo_goes_back_one_version():
 def test_undo_twice_after_two_changes():
     history = start_history(priya(), PICKS)
     history = apply_change(history, "Retire at 58", PICKS, retirement_age=58)
-    history = apply_change(history, "Spend less", PICKS, retirement_monthly_expense=40_000)
+    history = apply_change(
+        history, "Spend less", PICKS, retirement_monthly_expense=40_000
+    )
     assert undo(history).current.reason == "Retire at 58"
     assert undo(undo(history)).current.reason == "Original plan"
 

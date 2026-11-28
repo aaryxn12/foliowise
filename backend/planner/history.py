@@ -90,6 +90,7 @@ def undo(history: PlanHistory) -> PlanHistory:
         raise ValueError("Nothing to undo")
     return PlanHistory(history.versions[:-1])
 
+
 def monthly_sips(plan: Plan) -> dict[str, float]:
     """Each goal's monthly SIP, keyed by goal name."""
     return {goal.target.name: goal.funding.monthly_sip for goal in plan.goals}
@@ -104,13 +105,15 @@ def compare(old: Plan, new: Plan) -> PlanChange:
     old_sips, new_sips = monthly_sips(old), monthly_sips(new)
     names = list(old_sips) + [name for name in new_sips if name not in old_sips]
     goals = tuple(
-        GoalChange(name, old_sips.get(name, 0.0), new_sips.get(name, 0.0)) for name in names
+        GoalChange(name, old_sips.get(name, 0.0), new_sips.get(name, 0.0))
+        for name in names
     )
     return PlanChange(
         goals=goals,
         old_total_sip=sum(old_sips.values()),
         new_total_sip=sum(new_sips.values()),
-        now_affordable=new.affordability is not None and new.affordability.is_affordable,
+        now_affordable=new.affordability is not None
+        and new.affordability.is_affordable,
     )
 
 
